@@ -1,55 +1,60 @@
-<header class="bg-white shadow-sm border-b">
-    <div class="bg-black text-white text-center py-2">
-        <p class="text-sm">LIVRAISON GRATUITE SUR TOUS VOS VÊTEMENTS VINTAGE FEV 25-26</p>
-    </div>
-    
+<header class="bg-white border-b border-gray-200 shadow-sm">
     <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center h-16">
             <!-- Logo -->
             <div class="flex-shrink-0">
-                <a href="/" class="text-2xl font-bold text-black">PAIW</a>
+                <a href="/" class="text-2xl font-bold text-black tracking-tight">PAIW</a>
             </div>
 
             <!-- Navigation principale -->
-            <div class="hidden md:flex space-x-8">
-                <a href="/boutique" class="text-gray-900 hover:text-gray-600 px-3 py-2 text-sm font-medium">Boutique</a>
-                <a href="/histoire" class="text-gray-900 hover:text-gray-600 px-3 py-2 text-sm font-medium">Histoire</a>
-                <a href="/a-propos" class="text-gray-900 hover:text-gray-600 px-3 py-2 text-sm font-medium">À Propos</a>
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="/" class="{{ request()->is('/') ? 'bg-black text-white' : 'text-gray-700 hover:text-black hover:bg-gray-50' }} text-sm font-medium transition-colors px-3 py-2 rounded-md">Accueil</a>
+                <a href="/boutique" class="{{ request()->is('boutique*') ? 'bg-black text-white' : 'text-gray-700 hover:text-black hover:bg-gray-50' }} text-sm font-medium transition-colors px-3 py-2 rounded-md">Boutique</a>
+                <a href="/a-propos" class="{{ request()->is('a-propos*') ? 'bg-black text-white' : 'text-gray-700 hover:text-black hover:bg-gray-50' }} text-sm font-medium transition-colors px-3 py-2 rounded-md">À propos</a>
             </div>
 
-            <!-- Recherche et actions -->
+            <!-- Actions -->
             <div class="flex items-center space-x-4">
                 <!-- Barre de recherche -->
                 <div class="hidden md:flex relative">
                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <svg class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                         </svg>
                     </div>
-                    <input 
-                        type="text" 
-                        wire:model="searchQuery"
+                    <input
+                        type="text"
+                        wire:model.live.debounce.300ms="searchQuery"
                         wire:keydown.enter="search"
                         placeholder="Rechercher..."
-                        class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-black focus:border-black sm:text-sm"
+                        class="block w-64 pl-10 pr-3 py-2 border border-gray-300 rounded-md text-sm bg-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
                     >
                 </div>
 
-                <!-- Panier -->
-                <button class="relative text-gray-900 hover:text-gray-600">
-                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.5 6M7 13l1.5-6m12.5 0v0a2 2 0 012 2v10a2 2 0 01-2 2H7a2 2 0 01-2-2V7a2 2 0 012-2h12z" />
+                <!-- Recherche mobile -->
+                <button class="md:hidden text-gray-700 hover:text-black transition-colors p-2">
+                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
-                    <span class="absolute -top-2 -right-2 h-4 w-4 bg-black text-white rounded-full text-xs flex items-center justify-center">0</span>
                 </button>
 
-                <!-- Connexion -->
-                <a href="/login" class="text-gray-900 hover:text-gray-600 text-sm font-medium">Se connecter</a>
-            </div>
+                <!-- Compte utilisateur -->
+                <a href="/login" class="text-gray-700 hover:text-black transition-colors p-2">
+                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                </a>
 
-            <!-- Menu mobile -->
-            <div class="md:hidden">
-                <button type="button" class="text-gray-900 hover:text-gray-600">
+                <!-- Panier -->
+                <a href="/panier" class="relative text-gray-700 hover:text-black transition-colors p-2">
+                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                    </svg>
+                    <span class="absolute -top-2 -right-2 h-4 w-4 bg-black text-white rounded-full text-xs flex items-center justify-center font-medium">0</span>
+                </a>
+
+                <!-- Menu mobile -->
+                <button class="md:hidden text-gray-700 hover:text-black transition-colors p-2">
                     <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                     </svg>
