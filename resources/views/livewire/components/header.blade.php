@@ -2,7 +2,7 @@
     <div class="bg-black text-white text-center py-2">
         <p class="text-sm">LIVRAISON GRATUITE SUR TOUS VOS VÊTEMENTS VINTAGE FEV 25-26</p>
     </div>
-    
+
     <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center h-16">
             <!-- Logo -->
@@ -12,7 +12,7 @@
 
             <!-- Navigation principale -->
             <div class="hidden md:flex space-x-8">
-                <a href="/boutique" class="text-gray-900 hover:text-gray-600 px-3 py-2 text-sm font-medium">Boutique</a>
+                <a href="/shop" class="text-gray-900 hover:text-gray-600 px-3 py-2 text-sm font-medium">Boutique</a>
                 <a href="/histoire" class="text-gray-900 hover:text-gray-600 px-3 py-2 text-sm font-medium">Histoire</a>
                 <a href="/a-propos" class="text-gray-900 hover:text-gray-600 px-3 py-2 text-sm font-medium">À Propos</a>
             </div>
@@ -26,8 +26,8 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                         </svg>
                     </div>
-                    <input 
-                        type="text" 
+                    <input
+                        type="text"
                         wire:model="searchQuery"
                         wire:keydown.enter="search"
                         placeholder="Rechercher..."
