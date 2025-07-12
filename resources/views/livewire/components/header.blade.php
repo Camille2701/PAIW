@@ -1,4 +1,6 @@
+
 <header class="bg-white border-b border-gray-200 shadow-sm">
+
     <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center h-16">
             <!-- Logo -->
@@ -24,7 +26,8 @@
                     </div>
                     <input
                         type="text"
-                        wire:model.live.debounce.300ms="searchQuery"
+
+
                         wire:keydown.enter="search"
                         placeholder="Rechercher..."
                         class="block w-64 pl-10 pr-3 py-2 border border-gray-300 rounded-md text-sm bg-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
