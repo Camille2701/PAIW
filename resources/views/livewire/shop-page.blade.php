@@ -1,12 +1,31 @@
 <div>
-    {{-- Bannière noire sous le header --}}
+    {{-- Bannière avec sélecteur de genre --}}
     <section style="background-color: #000; color: white; padding: 3rem 0;">
         <div style="max-width: 1200px; margin: 0 auto; padding: 0 1rem;">
-            <h1 style="font-size: 2rem; font-weight: bold; margin-bottom: 1rem;">Hommes</h1>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h1 style="font-size: 2rem; font-weight: bold;">{{ $gender === 'men' ? 'Hommes' : 'Femmes' }}</h1>
+
+                <!-- Sélecteur de genre -->
+                <div style="display: flex; gap: 1rem;">
+                    <button wire:click="switchGender('men')"
+                            style="padding: 0.5rem 1rem; border: 1px solid white; background: {{ $gender === 'men' ? 'white' : 'transparent' }}; color: {{ $gender === 'men' ? 'black' : 'white' }}; border-radius: 0.25rem; cursor: pointer;">
+                        Homme
+                    </button>
+                    <button wire:click="switchGender('women')"
+                            style="padding: 0.5rem 1rem; border: 1px solid white; background: {{ $gender === 'women' ? 'white' : 'transparent' }}; color: {{ $gender === 'women' ? 'black' : 'white' }}; border-radius: 0.25rem; cursor: pointer;">
+                        Femme
+                    </button>
+                </div>
+            </div>
             <p style="font-size: 1.1rem; max-width: 600px;">
-                Renouvelez votre style avec les dernières tendances en matière de
-                vêtements pour hommes ou réalisez une garde-robe parfaitement
-                soignée grâce à notre gamme de pièces intemporelles.
+                @if($gender === 'men')
+                    Renouvelez votre style avec les dernières tendances en matière de
+                    vêtements pour hommes ou réalisez une garde-robe parfaitement
+                    soignée grâce à notre gamme de pièces intemporelles.
+                @else
+                    Découvrez notre collection féminine élégante et moderne,
+                    alliant confort et style pour toutes les occasions.
+                @endif
             </p>
         </div>
     </section>
@@ -21,6 +40,15 @@
                         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem;">
                             <h2 style="font-size: 1.1rem; font-weight: 500; color: #111827;">Filtres</h2>
                             <button wire:click="clearFilters" style="font-size: 0.875rem; color: #2563eb; cursor: pointer; border: none; background: none;">Effacer les filtres</button>
+                        </div>
+
+                        {{-- Recherche dans la page shop --}}
+                        <div style="margin-bottom: 1.5rem;">
+                            <h3 style="font-weight: 500; color: #111827; margin-bottom: 1rem;">Recherche</h3>
+                            <input type="text"
+                                   wire:model.live="search"
+                                   placeholder="Rechercher un produit..."
+                                   style="width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.25rem; font-size: 0.875rem;">
                         </div>
 
                         {{-- Catégories --}}
@@ -43,17 +71,37 @@
                         <div style="margin-bottom: 1.5rem;">
                             <h3 style="font-weight: 500; color: #111827; margin-bottom: 1rem;">Couleur</h3>
                             <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
-                                <div wire:click="toggleColor('orange')" style="width: 30px; height: 30px; border-radius: 50%; cursor: pointer; border: 2px solid {{ in_array('orange', $selectedColors) ? '#000' : '#d1d5db' }}; background-color: #f97316;"></div>
-                                <div wire:click="toggleColor('purple')" style="width: 30px; height: 30px; border-radius: 50%; cursor: pointer; border: 2px solid {{ in_array('purple', $selectedColors) ? '#000' : '#d1d5db' }}; background-color: #9333ea;"></div>
-                                <div wire:click="toggleColor('blue')" style="width: 30px; height: 30px; border-radius: 50%; cursor: pointer; border: 2px solid {{ in_array('blue', $selectedColors) ? '#000' : '#d1d5db' }}; background-color: #2563eb;"></div>
-                                <div wire:click="toggleColor('green')" style="width: 30px; height: 30px; border-radius: 50%; cursor: pointer; border: 2px solid {{ in_array('green', $selectedColors) ? '#000' : '#d1d5db' }}; background-color: #16a34a;"></div>
-                                <div wire:click="toggleColor('teal')" style="width: 30px; height: 30px; border-radius: 50%; cursor: pointer; border: 2px solid {{ in_array('teal', $selectedColors) ? '#000' : '#d1d5db' }}; background-color: #0d9488;"></div>
-                                <div wire:click="toggleColor('red')" style="width: 30px; height: 30px; border-radius: 50%; cursor: pointer; border: 2px solid {{ in_array('red', $selectedColors) ? '#000' : '#d1d5db' }}; background-color: #dc2626;"></div>
-                                <div wire:click="toggleColor('cyan')" style="width: 30px; height: 30px; border-radius: 50%; cursor: pointer; border: 2px solid {{ in_array('cyan', $selectedColors) ? '#000' : '#d1d5db' }}; background-color: #06b6d4;"></div>
-                                <div wire:click="toggleColor('black')" style="width: 30px; height: 30px; border-radius: 50%; cursor: pointer; border: 2px solid {{ in_array('black', $selectedColors) ? '#000' : '#d1d5db' }}; background-color: #374151;"></div>
-                                <div wire:click="toggleColor('pink')" style="width: 30px; height: 30px; border-radius: 50%; cursor: pointer; border: 2px solid {{ in_array('pink', $selectedColors) ? '#000' : '#d1d5db' }}; background-color: #ec4899;"></div>
-                                <div wire:click="toggleColor('lime')" style="width: 30px; height: 30px; border-radius: 50%; cursor: pointer; border: 2px solid {{ in_array('lime', $selectedColors) ? '#000' : '#d1d5db' }}; background-color: #65a30d;"></div>
+                                @foreach($colors as $color)
+                                    <div wire:click="toggleColor({{ $color->id }})"
+                                         style="width: 30px; height: 30px; border-radius: 50%; cursor: pointer; border: 2px solid {{ in_array($color->id, $selectedColors) ? '#000' : '#d1d5db' }}; background-color: {{ $color->hex_code }}; position: relative;"
+                                         title="{{ $color->name }}">
+                                        @if(in_array($color->id, $selectedColors))
+                                            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: {{ $color->hex_code === '#374151' ? 'white' : 'black' }}; font-size: 12px;">✓</div>
+                                        @endif
+                                    </div>
+                                @endforeach
                             </div>
+
+                            {{-- Dropdown pour le type de filtre couleur (apparaît seulement si 2+ couleurs sélectionnées) --}}
+                            @if(count($selectedColors) >= 2)
+                                <div style="margin-top: 1rem; padding: 0.75rem; background-color: #f3f4f6; border-radius: 0.375rem; border: 1px solid #d1d5db;">
+                                    <label style="font-size: 0.875rem; color: #374151; display: block; margin-bottom: 0.5rem;">
+                                        Afficher les produits avec :
+                                    </label>
+                                    <select wire:model.live="colorFilterType"
+                                            style="width: 100%; padding: 0.375rem; border: 1px solid #d1d5db; border-radius: 0.25rem; font-size: 0.875rem; background-color: white;">
+                                        <option value="ou">Au moins une de ces couleurs (OU)</option>
+                                        <option value="et">Toutes ces couleurs (ET)</option>
+                                    </select>
+                                    <p style="font-size: 0.75rem; color: #6b7280; margin-top: 0.25rem;">
+                                        @if($colorFilterType === 'ou')
+                                            Les produits affichés auront au moins une des couleurs sélectionnées.
+                                        @else
+                                            Les produits affichés auront toutes les couleurs sélectionnées.
+                                        @endif
+                                    </p>
+                                </div>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -65,6 +113,9 @@
                         <div>
                             <p style="font-size: 0.875rem; color: #6b7280;">
                                 Affichage de {{ $products->count() }} produits
+                                @if(!empty($search))
+                                    pour "{{ $search }}"
+                                @endif
                             </p>
                         </div>
 
@@ -96,9 +147,20 @@
                                             <p style="font-size: 0.875rem; color: #111827; font-weight: 500;">{{ number_format($product->price, 2) }}€</p>
                                         </div>
                                         <span style="font-size: 0.75rem; color: #6b7280; background-color: #f3f4f6; padding: 0.25rem 0.5rem; border-radius: 0.25rem; margin-left: 0.5rem;">
-                                            M
+                                            {{ $product->productType->name }}
                                         </span>
                                     </div>
+
+                                    {{-- Couleurs disponibles --}}
+                                    @if($product->variants->isNotEmpty())
+                                        <div style="margin-top: 0.5rem;">
+                                            <div style="display: flex; gap: 0.25rem;">
+                                                @foreach($product->variants->pluck('color')->unique('id') as $color)
+                                                    <div style="width: 16px; height: 16px; border-radius: 50%; background-color: {{ $color->hex_code }}; border: 1px solid #d1d5db;" title="{{ $color->name }}"></div>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                    @endif
                                 </div>
                             </div>
                         @empty

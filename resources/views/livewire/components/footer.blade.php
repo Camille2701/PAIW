@@ -38,9 +38,9 @@
             <div>
                 <h4 class="text-lg font-semibold text-white mb-4">Contact</h4>
                 <ul class="space-y-3 text-sm">
-                    <li class="text-gray-300">hello@paiw.com</li>
-                    <li class="text-gray-300">+33 1 23 45 67 89</li>
-                    <li class="text-gray-300">Paris, France</li>
+                    <li class="text-gray-300"><a href="mailto:hello@paiw.fr" class="hover:underline">hello@paiw.fr</a></li>
+                    <li class="text-gray-300">+33 2 23 45 67 89</li>
+                    <li class="text-gray-300">Nantes, France</li>
                 </ul>
             </div>
         </div>
@@ -52,8 +52,8 @@
                     © 2025 PAIW. Fait avec ❤️ pour la planète.
                 </p>
                 <div class="flex space-x-6 text-sm">
-                    <a href="/mentions-legales" class="text-gray-400 hover:text-white transition-colors">Mentions légales</a>
-                    <a href="/confidentialite" class="text-gray-400 hover:text-white transition-colors">Confidentialité</a>
+                    <a href="/legal" class="text-gray-400 hover:text-white transition-colors">Mentions légales</a>
+                    <a href="/privacy" class="text-gray-400 hover:text-white transition-colors">Politique de confidentialité</a>
                 </div>
             </div>
         </div>

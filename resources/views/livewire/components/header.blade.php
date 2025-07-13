@@ -1,6 +1,5 @@
 
 <header class="bg-white border-b border-gray-200 shadow-sm">
-
     <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center h-16">
             <!-- Logo -->
@@ -11,8 +10,8 @@
             <!-- Navigation principale -->
             <div class="hidden md:flex items-center space-x-8">
                 <a href="/" class="{{ request()->is('/') ? 'bg-black text-white' : 'text-gray-700 hover:text-black hover:bg-gray-50' }} text-sm font-medium transition-colors px-3 py-2 rounded-md">Accueil</a>
-                <a href="/boutique" class="{{ request()->is('boutique*') ? 'bg-black text-white' : 'text-gray-700 hover:text-black hover:bg-gray-50' }} text-sm font-medium transition-colors px-3 py-2 rounded-md">Boutique</a>
-                <a href="/a-propos" class="{{ request()->is('a-propos*') ? 'bg-black text-white' : 'text-gray-700 hover:text-black hover:bg-gray-50' }} text-sm font-medium transition-colors px-3 py-2 rounded-md">À propos</a>
+                <a href="/shop" class="{{ request()->is('shop*') ? 'bg-black text-white' : 'text-gray-700 hover:text-black hover:bg-gray-50' }} text-sm font-medium transition-colors px-3 py-2 rounded-md">Boutique</a>
+                <a href="/about" class="{{ request()->is('about*') ? 'bg-black text-white' : 'text-gray-700 hover:text-black hover:bg-gray-50' }} text-sm font-medium transition-colors px-3 py-2 rounded-md">À propos</a>
             </div>
 
             <!-- Actions -->
@@ -26,8 +25,7 @@
                     </div>
                     <input
                         type="text"
-
-
+                        wire:model="searchQuery"
                         wire:keydown.enter="search"
                         placeholder="Rechercher..."
                         class="block w-64 pl-10 pr-3 py-2 border border-gray-300 rounded-md text-sm bg-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
@@ -65,4 +63,29 @@
             </div>
         </div>
     </nav>
+
+    <!-- Modal de recherche pour la page d'accueil -->
+    @if($showSearchModal)
+        <div class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center" wire:click="closeModal">
+            <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4" wire:click.stop>
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold text-gray-900">Recherche</h3>
+                    <button wire:click="closeModal" class="text-gray-400 hover:text-gray-600">
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+                <p class="text-gray-600 mb-4">Vous recherchez "{{ $searchQuery }}"</p>
+                <div class="flex space-x-3">
+                    <button wire:click="goToShop" class="flex-1 bg-black text-white px-4 py-2 rounded-md hover:bg-gray-800 transition-colors">
+                        Voir les produits
+                    </button>
+                    <button wire:click="closeModal" class="flex-1 border border-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-50 transition-colors">
+                        Annuler
+                    </button>
+                </div>
+            </div>
+        </div>
+    @endif
 </header>
