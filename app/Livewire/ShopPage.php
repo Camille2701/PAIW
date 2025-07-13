@@ -15,12 +15,34 @@ class ShopPage extends Component
     // Propriétés pour les filtres
     public $selectedCategories = [];
     public $selectedColors = [];
+    public $colorFilterType = 'ou'; // 'ou' ou 'et'
     public $sortBy = 'popular';
     public $search = '';
+    public $gender = 'men'; // Par défaut on affiche les vêtements pour hommes
 
     // Propriétés pour l'affichage
     public $showFilters = true;
     public $perPage = 6;
+
+    public function mount()
+    {
+        // Si on a une recherche dans l'URL, on la récupère
+        if (request('search')) {
+            $this->search = request('search');
+        }
+
+        // Si on a un genre dans l'URL, on le récupère
+        if (request('gender')) {
+            $this->gender = request('gender');
+        }
+
+        // Détecter automatiquement le genre selon la route
+        if (request()->is('shop/women*')) {
+            $this->gender = 'women';
+        } elseif (request()->is('shop/men*')) {
+            $this->gender = 'men';
+        }
+    }
 
     // Méthode pour charger plus de produits
     public function loadMore()
@@ -41,6 +63,12 @@ class ShopPage extends Component
         $this->perPage = 6;
     }
 
+    public function updatedColorFilterType()
+    {
+        $this->resetPage();
+        $this->perPage = 6;
+    }
+
     public function updatedSortBy()
     {
         $this->resetPage();
@@ -53,19 +81,56 @@ class ShopPage extends Component
         $this->perPage = 6;
     }
 
+    public function updatedGender()
+    {
+        $this->selectedCategories = []; // Reset les catégories quand on change de genre
+        $this->selectedColors = []; // Reset les couleurs aussi
+        $this->colorFilterType = 'ou'; // Reset le type de filtre couleur
+        $this->resetPage();
+        $this->perPage = 6;
+
+        // Redirection vers la bonne URL
+        $url = $this->gender === 'women' ? '/shop/women' : '/shop/men';
+        if (!empty($this->search)) {
+            $url .= '?search=' . urlencode($this->search);
+        }
+
+        return redirect($url);
+    }
+
+    public function switchGender($newGender)
+    {
+        $this->gender = $newGender;
+        $this->selectedCategories = [];
+        $this->selectedColors = [];
+        $this->colorFilterType = 'ou';
+        $this->resetPage();
+        $this->perPage = 6;
+
+        // Redirection vers la bonne URL
+        $url = $newGender === 'women' ? '/shop/women' : '/shop/men';
+        if (!empty($this->search)) {
+            $url .= '?search=' . urlencode($this->search);
+        }
+
+        return redirect($url);
+    }
+
     public function clearFilters()
     {
         $this->selectedCategories = [];
         $this->selectedColors = [];
+        $this->colorFilterType = 'ou';
+        $this->search = '';
         $this->resetPage();
     }
 
-    public function toggleColor($color)
+    public function toggleColor($colorId)
     {
-        if (in_array($color, $this->selectedColors)) {
-            $this->selectedColors = array_diff($this->selectedColors, [$color]);
+        if (in_array($colorId, $this->selectedColors)) {
+            $this->selectedColors = array_diff($this->selectedColors, [$colorId]);
         } else {
-            $this->selectedColors[] = $color;
+            $this->selectedColors[] = $colorId;
         }
         $this->resetPage();
     }
@@ -74,9 +139,31 @@ class ShopPage extends Component
     {
         $query = Product::with(['productType', 'variants.size', 'variants.color']);
 
+        // Filtrer par genre
+        $query->whereHas('productType', function($q) {
+            $q->where('gender', $this->gender);
+        });
+
         // Filtrer par catégories
         if (!empty($this->selectedCategories)) {
             $query->whereIn('product_type_id', $this->selectedCategories);
+        }
+
+        // Filtrer par couleurs
+        if (!empty($this->selectedColors)) {
+            if ($this->colorFilterType === 'et') {
+                // Filtrage ET : le produit doit avoir TOUTES les couleurs sélectionnées
+                foreach ($this->selectedColors as $colorId) {
+                    $query->whereHas('variants.color', function($q) use ($colorId) {
+                        $q->where('colors.id', $colorId);
+                    });
+                }
+            } else {
+                // Filtrage OU : le produit doit avoir AU MOINS UNE des couleurs sélectionnées
+                $query->whereHas('variants.color', function($q) {
+                    $q->whereIn('colors.id', $this->selectedColors);
+                });
+            }
         }
 
         // Filtrer par recherche
@@ -106,7 +193,8 @@ class ShopPage extends Component
         $products = $allProducts->take($this->perPage);
         $hasMoreProducts = $allProducts->count() > $this->perPage;
 
-        $productTypes = ProductType::all();
+        // Récupérer les types de produits pour le genre sélectionné
+        $productTypes = ProductType::where('gender', $this->gender)->get();
         $colors = Color::all();
 
         return view('livewire.shop-page', [

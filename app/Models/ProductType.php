@@ -9,6 +9,7 @@ class ProductType extends Model
 {
     protected $fillable = [
         'name',
+        'gender',
     ];
 
     public function products(): HasMany

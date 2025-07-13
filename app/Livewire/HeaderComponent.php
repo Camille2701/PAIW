@@ -1,17 +1,17 @@
 <?php
 
-namespace App\Livewire\Components;
+namespace App\Livewire;
 
 use Livewire\Component;
 
-class Header extends Component
+class HeaderComponent extends Component
 {
-    public $searchQuery = '';
+    public $search = '';
     public $showSearchModal = false;
 
-    public function search()
+    public function searchAction()
     {
-        if (empty($this->searchQuery)) {
+        if (empty($this->search)) {
             return;
         }
 
@@ -20,26 +20,23 @@ class Header extends Component
             $this->showSearchModal = true;
         } else {
             // Sinon, rediriger vers la page shop avec la recherche
-            return redirect('/shop/men?search=' . urlencode($this->searchQuery));
+            return redirect()->route('shop', ['search' => $this->search]);
         }
     }
 
     public function goToShop()
     {
-        if (!empty($this->searchQuery)) {
-            return redirect('/shop/men?search=' . urlencode($this->searchQuery));
-        }
-        return redirect('/shop/men');
+        return redirect()->route('shop', ['search' => $this->search]);
     }
 
     public function closeModal()
     {
         $this->showSearchModal = false;
-        $this->searchQuery = '';
+        $this->search = '';
     }
 
     public function render()
     {
-        return view('livewire.components.header');
+        return view('livewire.header-component');
     }
 }
