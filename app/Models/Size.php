@@ -15,11 +15,12 @@ class Size extends Model
     public function getNameAttribute()
     {
         return $this->label;
-    //Unguard pour accès à Filament
+    }
+
+    // Unguard pour accès à Filament
     protected static function boot()
     {
         parent::boot();
         Model::unguard();
-
     }
 }
