@@ -10,4 +10,10 @@ class Color extends Model
         'name',
         'hex_code',
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+        Model::unguard();
+    }
 }

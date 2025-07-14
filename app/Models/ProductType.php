@@ -12,6 +12,12 @@ class ProductType extends Model
         'gender',
     ];
 
+    protected static function boot()
+    {
+        parent::boot();
+        Model::unguard();
+    }
+
     public function products(): HasMany
     {
         return $this->hasMany(Product::class);

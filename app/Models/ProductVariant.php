@@ -15,6 +15,12 @@ class ProductVariant extends Model
         'sku',
     ];
 
+    protected static function boot()
+    {
+        parent::boot();
+        Model::unguard();
+    }
+
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
