@@ -10,9 +10,16 @@ class Size extends Model
         'label',
     ];
 
+
     // Accessor pour récupérer le nom de la taille
     public function getNameAttribute()
     {
         return $this->label;
+    //Unguard pour accès à Filament
+    protected static function boot()
+    {
+        parent::boot();
+        Model::unguard();
+
     }
 }

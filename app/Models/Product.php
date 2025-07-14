@@ -24,6 +24,12 @@ class Product extends Model
         'price' => 'decimal:2',
     ];
 
+    protected static function boot()
+    {
+        parent::boot();
+        Model::unguard();
+    }
+
     public function productType(): BelongsTo
     {
         return $this->belongsTo(ProductType::class);
