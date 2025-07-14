@@ -7,12 +7,19 @@ use Illuminate\Database\Eloquent\Model;
 class Size extends Model
 {
     protected $fillable = [
-        'name',
+        'label',
     ];
 
+
+    // Accessor pour récupérer le nom de la taille
+    public function getNameAttribute()
+    {
+        return $this->label;
+    //Unguard pour accès à Filament
     protected static function boot()
     {
         parent::boot();
         Model::unguard();
+
     }
 }
