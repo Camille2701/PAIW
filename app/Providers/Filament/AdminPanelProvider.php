@@ -37,10 +37,16 @@ class AdminPanelProvider extends PanelProvider
             ->pages([
                 Pages\Dashboard::class,
             ])
+            ->navigationGroups([
+                'Configuration',
+                'Catalogue',
+                'Utilisateurs',
+            ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
-                Widgets\AccountWidget::class,
-                Widgets\FilamentInfoWidget::class,
+                \App\Filament\Widgets\StatsOverview::class,
+                \App\Filament\Widgets\QuickActions::class,
+                \App\Filament\Widgets\ProductStockChart::class,
             ])
             ->middleware([
                 EncryptCookies::class,

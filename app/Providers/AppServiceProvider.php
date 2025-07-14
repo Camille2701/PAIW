@@ -19,6 +19,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Configuration de la locale
+        app()->setLocale('fr');
+
+        // Traduction des genres pour Filament
+        \Illuminate\Support\Facades\Blade::directive('gender', function ($expression) {
+            return "<?php echo __('gender.' . $expression); ?>";
+        });
     }
 }
