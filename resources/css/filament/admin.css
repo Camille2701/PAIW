@@ -1,0 +1,112 @@
+/* Amélioration de la sidebar Filament */
+:root {
+    --sidebar-width: 280px;
+}
+
+/* Sidebar principale */
+.fi-sidebar {
+    background: linear-gradient(135deg, #1f2937 0%, #111827 100%) !important;
+    border-right: 1px solid #374151 !important;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Navigation principale */
+.fi-sidebar-nav {
+    padding: 1rem !important;
+}
+
+/* Groupes de navigation */
+.fi-sidebar-group {
+    margin-bottom: 1.5rem !important;
+}
+
+.fi-sidebar-group-label {
+    color: #9ca3af !important;
+    font-size: 0.75rem !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    margin-bottom: 0.5rem !important;
+    padding: 0 0.75rem !important;
+}
+
+/* Items de navigation */
+.fi-sidebar-item {
+    margin-bottom: 0.25rem !important;
+}
+
+.fi-sidebar-item-button {
+    background: transparent !important;
+    border-radius: 0.5rem !important;
+    padding: 0.75rem !important;
+    transition: all 0.2s ease !important;
+    color: #d1d5db !important;
+}
+
+.fi-sidebar-item-button:hover {
+    background: rgba(59, 130, 246, 0.1) !important;
+    color: #3b82f6 !important;
+    transform: translateX(4px) !important;
+}
+
+.fi-sidebar-item-button[aria-current="page"] {
+    background: rgba(245, 158, 11, 0.15) !important;
+    color: #f59e0b !important;
+    border-left: 3px solid #f59e0b !important;
+}
+
+/* Icônes */
+.fi-sidebar-item-icon {
+    margin-right: 0.75rem !important;
+    width: 1.25rem !important;
+    height: 1.25rem !important;
+}
+
+/* Labels */
+.fi-sidebar-item-label {
+    font-weight: 500 !important;
+    font-size: 0.875rem !important;
+}
+
+/* Header de la sidebar */
+.fi-sidebar-header {
+    padding: 1.5rem 1rem !important;
+    border-bottom: 1px solid #374151 !important;
+    background: #111827 !important;
+}
+
+/* Brand/Logo */
+.fi-logo {
+    color: #f59e0b !important;
+    font-weight: 700 !important;
+    font-size: 1.5rem !important;
+}
+
+/* Footer de la sidebar */
+.fi-sidebar-footer {
+    padding: 1rem !important;
+    border-top: 1px solid #374151 !important;
+    background: #111827 !important;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .fi-sidebar {
+        transform: translateX(-100%) !important;
+    }
+
+    .fi-sidebar.fi-sidebar-open {
+        transform: translateX(0) !important;
+    }
+}
+
+/* Animation pour l'ouverture/fermeture */
+.fi-sidebar {
+    transition: transform 0.3s ease !important;
+}
+
+/* Amélioration du contraste pour les badges */
+.fi-badge {
+    font-weight: 600 !important;
+    font-size: 0.75rem !important;
+}
