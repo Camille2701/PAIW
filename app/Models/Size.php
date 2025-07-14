@@ -9,4 +9,10 @@ class Size extends Model
     protected $fillable = [
         'name',
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+        Model::unguard();
+    }
 }
