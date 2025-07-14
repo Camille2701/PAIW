@@ -133,7 +133,10 @@
                     {{-- Grille de produits --}}
                     <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-bottom: 2rem;">
                         @forelse($products as $product)
-                            <div style="background: white; border-radius: 0.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); overflow: hidden;">
+                            <a href="/shop/{{ $gender }}/{{ $product->slug }}"
+                               style="background: white; border-radius: 0.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); overflow: hidden; text-decoration: none; color: inherit; transition: transform 0.2s ease;"
+                               onmouseover="this.style.transform='translateY(-2px)'"
+                               onmouseout="this.style.transform='translateY(0)'">
                                 {{-- Image carrée --}}
                                 <div style="width: 100%; height: 250px; background-color: #e5e7eb; display: flex; align-items: center; justify-content: center;">
                                     <span style="color: #6b7280; font-size: 0.875rem;">Image</span>
@@ -162,7 +165,7 @@
                                         </div>
                                     @endif
                                 </div>
-                            </div>
+                            </a>
                         @empty
                             <div style="grid-column: span 3; text-align: center; padding: 4rem 0;">
                                 <p style="color: #6b7280; font-size: 1.1rem;">Aucun produit trouvé.</p>

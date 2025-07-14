@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Livewire\HomePage;
 use App\Livewire\ShopPage;
+use App\Livewire\ProductPage;
 
 Route::get('/', HomePage::class)->name('home');
 Route::get('/shop', function() {
@@ -10,3 +11,7 @@ Route::get('/shop', function() {
 })->name('shop');
 Route::get('/shop/men', ShopPage::class)->name('shop.men');
 Route::get('/shop/women', ShopPage::class)->name('shop.women');
+
+// Routes pour les pages produit
+Route::get('/shop/men/{product:slug}', ProductPage::class)->name('product.men');
+Route::get('/shop/women/{product:slug}', ProductPage::class)->name('product.women');
