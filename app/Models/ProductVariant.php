@@ -15,7 +15,7 @@ class ProductVariant extends Model implements HasMedia
         'product_id',
         'size_id',
         'color_id',
-        'stock_quantity',
+        'stock',
         'sku',
     ];
 

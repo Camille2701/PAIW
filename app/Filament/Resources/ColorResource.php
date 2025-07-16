@@ -10,6 +10,10 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Filament\Infolists\Infolist;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\ColorEntry;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
@@ -31,12 +35,21 @@ class ColorResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\ColorPicker::make('hex_code')
-                    ->required()
-                    ->label('Color'),
+                Forms\Components\Section::make('Informations de la couleur')
+                    ->description('Définissez le nom et la teinte de la couleur')
+                    ->schema([
+                        Forms\Components\TextInput::make('name')
+                            ->label('Nom de la couleur')
+                            ->required()
+                            ->maxLength(255)
+                            ->placeholder('Ex: Rouge foncé, Bleu marine...'),
+
+                        Forms\Components\ColorPicker::make('hex_code')
+                            ->label('Code couleur')
+                            ->required()
+                            ->helperText('Sélectionnez la teinte exacte'),
+                    ])
+                    ->columns(2),
             ]);
     }
 
@@ -47,16 +60,31 @@ class ColorResource extends Resource
                 Tables\Columns\TextColumn::make('name')
                     ->label('Nom')
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->weight('bold'),
+
+                Tables\Columns\TextColumn::make('hex_code')
+                    ->label('Code couleur')
+                    ->formatStateUsing(fn ($state) => $state)
+                    ->copyable()
+                    ->copyMessage('Code couleur copié!')
+                    ->copyMessageDuration(1500)
+                    ->badge()
+                    ->color('gray')
+                    ->fontFamily('mono'),
+
                 Tables\Columns\ColorColumn::make('hex_code')
-                    ->label('Couleur')
-                    ->searchable(),
+                    ->label('Couleur'),
+
                 Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
+                    ->label('Créé le')
+                    ->dateTime('d/m/Y H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
+
                 Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
+                    ->label('Modifié le')
+                    ->dateTime('d/m/Y H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
@@ -66,11 +94,59 @@ class ColorResource extends Resource
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
+            ])
+            ->defaultSort('name');
+    }
+
+    public static function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist
+            ->schema([
+                Section::make('Détails de la couleur')
+                    ->schema([
+                        TextEntry::make('name')
+                            ->label('Nom')
+                            ->size('lg')
+                            ->weight('bold'),
+
+                        ColorEntry::make('hex_code')
+                            ->label('Couleur'),
+
+                        TextEntry::make('hex_code')
+                            ->label('Code hexadécimal')
+                            ->copyable()
+                            ->copyMessage('Code couleur copié!')
+                            ->badge()
+                            ->color('gray'),
+                    ])
+                    ->columns(3),
+
+                Section::make('Informations système')
+                    ->schema([
+                        TextEntry::make('created_at')
+                            ->label('Créé le')
+                            ->dateTime('d/m/Y à H:i')
+                            ->placeholder('Non disponible'),
+
+                        TextEntry::make('updated_at')
+                            ->label('Dernière modification')
+                            ->dateTime('d/m/Y à H:i')
+                            ->placeholder('Jamais modifié')
+                            ->formatStateUsing(function ($record) {
+                                // Si pas de modification, afficher la date de création
+                                if ($record->updated_at->eq($record->created_at)) {
+                                    return $record->created_at->format('d/m/Y à H:i') . ' (création)';
+                                }
+                                return $record->updated_at->format('d/m/Y à H:i');
+                            }),
+                    ])
+                    ->columns(2),
             ]);
     }
 
