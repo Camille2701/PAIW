@@ -82,11 +82,25 @@ class ProductPage extends Component
         $this->updateUrl();
     }
 
+    // Propriété calculée pour l'image courante
+    public function getCurrentImageUrlProperty()
+    {
+        return $this->getCurrentImage('large');
+    }
+
     // Méthode pour obtenir l'image de la couleur sélectionnée
     public function getCurrentImage($conversion = 'large')
     {
+        // S'assurer que selectedColorId est toujours défini
+        if (!$this->selectedColorId && $this->availableColors->isNotEmpty()) {
+            $this->selectedColorId = $this->availableColors->first()->id;
+        }
+
         if ($this->selectedColorId) {
-            return $this->product->getImageUrl($this->selectedColorId, $conversion);
+            $imageUrl = $this->product->getImageUrl($this->selectedColorId, $conversion);
+            if ($imageUrl) {
+                return $imageUrl;
+            }
         }
 
         return $this->product->getDefaultImage($conversion);
@@ -100,6 +114,11 @@ class ProductPage extends Component
 
     public function updatedSelectedSizeId()
     {
+        // S'assurer que la couleur reste sélectionnée
+        if (!$this->selectedColorId && $this->availableColors->isNotEmpty()) {
+            $this->selectedColorId = $this->availableColors->first()->id;
+        }
+
         $this->updateCurrentVariant();
         // Ajuster la quantité si elle dépasse le stock disponible
         if ($this->currentVariant && $this->quantity > $this->currentVariant->stock) {
@@ -201,6 +220,19 @@ class ProductPage extends Component
     public function canAddToCart()
     {
         return $this->selectedColorId && $this->selectedSizeId && $this->isInStock();
+    }
+
+    // Méthode pour vérifier si la couleur sélectionnée a du stock
+    public function isColorInStock()
+    {
+        if (!$this->selectedColorId) {
+            return false;
+        }
+
+        return $this->product->variants
+            ->where('color_id', $this->selectedColorId)
+            ->where('stock', '>', 0)
+            ->isNotEmpty();
     }
 
     public function render()

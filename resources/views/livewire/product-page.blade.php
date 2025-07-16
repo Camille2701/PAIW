@@ -27,10 +27,11 @@
                 <div class="p-8">
                     <!-- Image principale uniquement -->
                     <div class="aspect-square rounded-2xl overflow-hidden bg-gray-100">
-                        @if($this->getCurrentImage('large'))
-                            <img src="{{ $this->getCurrentImage('large') }}"
+                        @if($this->currentImageUrl)
+                            <img src="{{ $this->currentImageUrl }}"
                                  alt="{{ $product->name }}{{ $selectedColorId ? ' - ' . $availableColors->firstWhere('id', $selectedColorId)?->name : '' }}"
-                                 class="w-full h-full object-cover">
+                                 class="w-full h-full object-cover"
+                                 loading="lazy">
                         @else
                             <div class="w-full h-full bg-gray-200 flex items-center justify-center">
                                 <div class="text-center">
@@ -52,28 +53,51 @@
                         <h1 class="text-3xl font-bold text-gray-900">{{ $product->name }}</h1>
                     </div>
 
-                    <!-- Indicateur de stock général -->
-                    @php
-                        $totalStock = $this->product->variants->sum('stock');
-                    @endphp
-                    @if($totalStock > 0)
-                        <div class="bg-green-50 border border-green-200 rounded-lg p-3 mb-6">
-                            <div class="flex items-center">
-                                <svg class="w-4 h-4 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                                </svg>
-                                <span class="text-sm text-green-700 font-medium">En stock</span>
+                    <!-- Indicateur de stock pour la couleur sélectionnée -->
+                    @if($selectedColorId)
+                        @if($this->isColorInStock())
+                            <div class="bg-green-50 border border-green-200 rounded-lg p-3 mb-6">
+                                <div class="flex items-center">
+                                    <svg class="w-4 h-4 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                    </svg>
+                                    <span class="text-sm text-green-700 font-medium">En stock pour cette couleur</span>
+                                </div>
                             </div>
-                        </div>
+                        @else
+                            <div class="bg-red-50 border border-red-200 rounded-lg p-3 mb-6">
+                                <div class="flex items-center">
+                                    <svg class="w-4 h-4 text-red-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                                    </svg>
+                                    <span class="text-sm text-red-700 font-medium">Rupture de stock pour cette couleur</span>
+                                </div>
+                            </div>
+                        @endif
                     @else
-                        <div class="bg-red-50 border border-red-200 rounded-lg p-3 mb-6">
-                            <div class="flex items-center">
-                                <svg class="w-4 h-4 text-red-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
-                                </svg>
-                                <span class="text-sm text-red-700 font-medium">Rupture de stock</span>
+                        <!-- Indicateur de stock général si aucune couleur sélectionnée -->
+                        @php
+                            $totalStock = $this->product->variants->sum('stock');
+                        @endphp
+                        @if($totalStock > 0)
+                            <div class="bg-green-50 border border-green-200 rounded-lg p-3 mb-6">
+                                <div class="flex items-center">
+                                    <svg class="w-4 h-4 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                    </svg>
+                                    <span class="text-sm text-green-700 font-medium">En stock</span>
+                                </div>
                             </div>
-                        </div>
+                        @else
+                            <div class="bg-red-50 border border-red-200 rounded-lg p-3 mb-6">
+                                <div class="flex items-center">
+                                    <svg class="w-4 h-4 text-red-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                                    </svg>
+                                    <span class="text-sm text-red-700 font-medium">Rupture de stock</span>
+                                </div>
+                            </div>
+                        @endif
                     @endif
 
                     <!-- Prix -->
