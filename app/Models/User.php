@@ -65,27 +65,32 @@ class User extends Authenticatable implements HasMedia
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('avatar')
-              ->singleFile()
-              ->acceptsMimeTypes(['image/jpeg', 'image/png', 'image/webp']);
+            ->singleFile()
+            ->acceptsMimeTypes(['image/jpeg', 'image/png', 'image/jpg', 'image/webp'])
+            ->useDisk('public');
     }
 
     public function registerMediaConversions(Media $media = null): void
     {
         $this->addMediaConversion('thumb')
-              ->width(150)
-              ->height(150)
-              ->sharpen(10);
+            ->width(150)
+            ->height(150)
+            ->sharpen(10)
+            ->performOnCollections('avatar');
 
         $this->addMediaConversion('small')
-              ->width(50)
-              ->height(50)
-              ->sharpen(10);
+            ->width(50)
+            ->height(50)
+            ->sharpen(10)
+            ->performOnCollections('avatar');
     }
 
     public function getAvatarUrl()
     {
-        if ($this->getFirstMediaUrl('avatar')) {
-            return $this->getFirstMediaUrl('avatar');
+        $media = $this->getFirstMedia('avatar');
+        if ($media) {
+            // Construire l'URL manuellement pour s'assurer qu'elle fonctionne
+            return asset('storage/' . $media->id . '/' . $media->file_name);
         }
 
         // Avatar par défaut basé sur les initiales
@@ -94,8 +99,10 @@ class User extends Authenticatable implements HasMedia
 
     public function getAvatarThumbUrl()
     {
-        if ($this->getFirstMediaUrl('avatar')) {
-            return $this->getFirstMediaUrl('avatar');
+        $media = $this->getFirstMedia('avatar');
+        if ($media) {
+            // Construire l'URL manuellement pour la vignette
+            return asset('storage/' . $media->id . '/' . $media->file_name);
         }
 
         return "https://ui-avatars.com/api/?name=" . urlencode($this->name) . "&size=150&background=6366f1&color=ffffff";
