@@ -1,9 +1,38 @@
-@extends('layouts.auth')
+@extends('layouts.web')
 
 @section('content')
 <div class="max-w-4xl mx-auto px-4 py-8">
+    <!-- Messages de succès -->
+    @if (session('success'))
+        <div class="mb-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
+            {{ session('success') }}
+        </div>
+    @endif
+
     <div class="bg-white rounded-lg shadow-md p-6">
-        <h1 class="text-2xl font-bold text-gray-900 mb-6">Mon Profil</h1>
+        <div class="flex items-center justify-between mb-6">
+            <h1 class="text-2xl font-bold text-gray-900">Mon Profil</h1>
+
+            <!-- Avatar cliquable -->
+            <div class="flex items-center space-x-4">
+                <div class="relative">
+                    <img src="{{ $user->getAvatarThumbUrl() }}"
+                         alt="Avatar"
+                         class="w-20 h-20 rounded-full border-4 border-blue-200 cursor-pointer hover:border-blue-400 transition-colors"
+                         onclick="openAvatarModal()">
+                    <button class="absolute -bottom-1 -right-1 bg-blue-600 text-white rounded-full p-1 hover:bg-blue-700 transition-colors"
+                            onclick="openAvatarModal()">
+                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                        </svg>
+                    </button>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500">Cliquez sur votre avatar</p>
+                    <p class="text-sm text-gray-500">pour le modifier</p>
+                </div>
+            </div>
+        </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
@@ -76,5 +105,15 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal d'avatar -->
+    @livewire('avatar-modal')
 </div>
+
+<script>
+    // Fonction pour ouvrir la modal d'avatar
+    function openAvatarModal() {
+        Livewire.dispatch('openModal');
+    }
+</script>
 @endsection

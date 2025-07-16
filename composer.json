@@ -8,6 +8,7 @@
     "require": {
         "php": "^8.2",
         "filament/filament": "^3.3",
+        "filament/spatie-laravel-media-library-plugin": "^3.3",
         "filament/spatie-laravel-translatable-plugin": "*",
         "laravel/fortify": "^1.27",
         "laravel/framework": "^12.0",
