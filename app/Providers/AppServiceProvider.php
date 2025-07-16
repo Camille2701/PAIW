@@ -11,7 +11,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // Enregistrer le service du panier
+        $this->app->singleton(\App\Services\CartService::class);
     }
 
     /**

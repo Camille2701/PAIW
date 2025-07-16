@@ -25,8 +25,7 @@
     </main>
 
     <!-- Footer -->
-    <livewire:components.footer />
-
-    @livewireScripts
+    <livewire:components.footer />    @livewireScripts
+    @stack('scripts')
 </body>
 </html>

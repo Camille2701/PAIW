@@ -170,16 +170,16 @@
                             <!-- Quantité -->
                             <div class="flex items-center border border-gray-300 rounded">
                                 <button wire:click="$set('quantity', {{ max(1, $quantity - 1) }})"
-                                        class="px-4 py-3 text-gray-600 hover:bg-gray-50 transition-colors">−</button>
+                                        class="px-4 py-3 text-gray-600 hover:bg-gray-50 transition-colors cursor-pointer">−</button>
                                 <span class="px-4 py-3 border-x border-gray-300 min-w-[60px] text-center">{{ $quantity }}</span>
-                                <button wire:click="$set('quantity', {{ $quantity + 1 }})"
-                                        class="px-4 py-3 text-gray-600 hover:bg-gray-50 transition-colors">+</button>
+                                <button wire:click="$set('quantity', {{ min($this->getRemainingStock(), $quantity + 1) }})"
+                                        class="px-4 py-3 text-gray-600 hover:bg-gray-50 transition-colors cursor-pointer">+</button>
                             </div>
 
                             <!-- Bouton ajouter au panier -->
                             <button wire:click="addToCart"
                                     {{ !$selectedSizeId || !$this->isInStock() ? 'disabled' : '' }}
-                                    class="flex-1 py-3 px-6 rounded font-medium transition-colors flex items-center justify-center
+                                    class="flex-1 py-3 px-6 rounded font-medium transition-colors flex items-center justify-center cursor-pointer
                                     {{ !$selectedSizeId ? 'bg-gray-400 text-white cursor-not-allowed opacity-50' : '' }}
                                     {{ $selectedSizeId && !$this->isInStock() ? 'bg-red-500 text-white cursor-not-allowed' : '' }}
                                     {{ $selectedSizeId && $this->isInStock() ? 'bg-gray-900 text-white hover:bg-gray-800' : '' }}">
@@ -201,6 +201,21 @@
                                 @endif
                             </button>
                         </div>
+
+                        <!-- Affichage du stock restant -->
+                        @if($selectedSizeId && $this->isInStock())
+                            <div class="text-sm text-gray-600">
+                                @if($this->getRemainingStock() <= 5)
+                                    <span class="text-orange-600 font-medium">
+                                        Plus que {{ $this->getRemainingStock() }} en stock
+                                    </span>
+                                @else
+                                    <span class="text-green-600">
+                                        {{ $this->getRemainingStock() }} en stock
+                                    </span>
+                                @endif
+                            </div>
+                        @endif
                     </div>
 
                     <!-- Informations de livraison -->
