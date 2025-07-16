@@ -89,7 +89,6 @@ class User extends Authenticatable implements HasMedia
     {
         $media = $this->getFirstMedia('avatar');
         if ($media) {
-            // Utiliser l'URL native de Spatie Media Library
             return asset('storage/' . $media->id . '/' . $media->file_name);
         }
 
@@ -101,7 +100,6 @@ class User extends Authenticatable implements HasMedia
     {
         $media = $this->getFirstMedia('avatar');
         if ($media) {
-            // Utiliser l'URL native de Spatie Media Library
             return asset('storage/' . $media->id . '/' . $media->file_name);
         }
 
