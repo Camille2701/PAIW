@@ -133,39 +133,55 @@
                     {{-- Grille de produits --}}
                     <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-bottom: 2rem;">
                         @forelse($products as $product)
-                            <a href="/shop/{{ $gender }}/{{ $product->slug }}"
-                               style="background: white; border-radius: 0.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); overflow: hidden; text-decoration: none; color: inherit; transition: transform 0.2s ease;"
-                               onmouseover="this.style.transform='translateY(-2px)'"
-                               onmouseout="this.style.transform='translateY(0)'">
-                                {{-- Image carrée --}}
-                                <div style="width: 100%; height: 250px; background-color: #e5e7eb; display: flex; align-items: center; justify-content: center;">
-                                    <span style="color: #6b7280; font-size: 0.875rem;">Image</span>
+                            <div style="background: white; border-radius: 0.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); overflow: hidden; transition: transform 0.2s ease;"
+                                 onmouseover="this.style.transform='translateY(-2px)'"
+                                 onmouseout="this.style.transform='translateY(0)'">
+                                {{-- Image carrée avec changement dynamique --}}
+                                <div style="position: relative;">
+                                    <a href="/shop/{{ $gender }}/{{ $product->slug }}" style="text-decoration: none;">
+                                        @if($product->getDefaultImage('large'))
+                                            <img id="product-image-{{ $product->id }}"
+                                                 src="{{ $product->getDefaultImage('large') }}"
+                                                 alt="{{ $product->name }}"
+                                                 style="width: 100%; height: 250px; object-fit: cover; display: block;">
+                                        @else
+                                            <div id="product-image-{{ $product->id }}"
+                                                 style="width: 100%; height: 250px; background-color: #e5e7eb; display: flex; align-items: center; justify-content: center;">
+                                                <span style="color: #6b7280; font-size: 0.875rem;">Image bientôt disponible</span>
+                                            </div>
+                                        @endif
+                                    </a>
                                 </div>
 
                                 {{-- Informations produit --}}
                                 <div style="padding: 1rem;">
-                                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                                        <div style="flex: 1;">
-                                            <h3 style="font-size: 0.875rem; font-weight: 500; color: #111827; margin-bottom: 0.25rem;">{{ $product->name }}</h3>
-                                            <p style="font-size: 0.875rem; color: #111827; font-weight: 500;">{{ number_format($product->price, 2) }}€</p>
+                                    <a href="/shop/{{ $gender }}/{{ $product->slug }}" style="text-decoration: none; color: inherit;">
+                                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                            <div style="flex: 1;">
+                                                <h3 style="font-size: 0.875rem; font-weight: 500; color: #111827; margin-bottom: 0.25rem;">{{ $product->name }}</h3>
+                                                <p style="font-size: 0.875rem; color: #111827; font-weight: 500;">{{ number_format($product->price, 2) }}€</p>
+                                            </div>
+                                            <span style="font-size: 0.75rem; color: #6b7280; background-color: #f3f4f6; padding: 0.25rem 0.5rem; border-radius: 0.25rem; margin-left: 0.5rem;">
+                                                {{ $product->productType->name }}
+                                            </span>
                                         </div>
-                                        <span style="font-size: 0.75rem; color: #6b7280; background-color: #f3f4f6; padding: 0.25rem 0.5rem; border-radius: 0.25rem; margin-left: 0.5rem;">
-                                            {{ $product->productType->name }}
-                                        </span>
-                                    </div>
+                                    </a>
 
-                                    {{-- Couleurs disponibles --}}
+                                    {{-- Couleurs disponibles avec changement d'image --}}
                                     @if($product->variants->isNotEmpty())
                                         <div style="margin-top: 0.5rem;">
                                             <div style="display: flex; gap: 0.25rem;">
                                                 @foreach($product->variants->pluck('color')->unique('id') as $color)
-                                                    <div style="width: 16px; height: 16px; border-radius: 50%; background-color: {{ $color->hex_code }}; border: 1px solid #d1d5db;" title="{{ $color->name }}"></div>
+                                                    <div style="width: 16px; height: 16px; border-radius: 50%; background-color: {{ $color->hex_code }}; border: 1px solid #d1d5db; cursor: pointer;"
+                                                         title="{{ $color->name }}"
+                                                         onmouseover="changeProductImage({{ $product->id }}, {{ $color->id }}, '{{ $product->getImageUrl($color->id, 'large') }}')"
+                                                         onmouseout="resetProductImage({{ $product->id }}, '{{ $product->getDefaultImage('large') }}')"></div>
                                                 @endforeach
                                             </div>
                                         </div>
                                     @endif
                                 </div>
-                            </a>
+                            </div>
                         @empty
                             <div style="grid-column: span 3; text-align: center; padding: 4rem 0;">
                                 <p style="color: #6b7280; font-size: 1.1rem;">Aucun produit trouvé.</p>
@@ -186,3 +202,64 @@
         </div>
     </section>
 </div>
+
+<script>
+    function changeProductImage(productId, colorId, imageUrl) {
+        const element = document.getElementById('product-image-' + productId);
+        if (element) {
+            if (imageUrl && imageUrl !== 'null' && imageUrl !== '') {
+                // C'est une vraie image
+                if (element.tagName === 'IMG') {
+                    element.src = imageUrl;
+                } else {
+                    // Remplacer le div par une image
+                    const img = document.createElement('img');
+                    img.id = 'product-image-' + productId;
+                    img.src = imageUrl;
+                    img.alt = 'Produit';
+                    img.style.cssText = 'width: 100%; height: 250px; object-fit: cover; display: block;';
+                    element.parentNode.replaceChild(img, element);
+                }
+            } else {
+                // Pas d'image, afficher le placeholder
+                if (element.tagName === 'IMG') {
+                    // Remplacer l'image par un div
+                    const div = document.createElement('div');
+                    div.id = 'product-image-' + productId;
+                    div.style.cssText = 'width: 100%; height: 250px; background-color: #e5e7eb; display: flex; align-items: center; justify-content: center;';
+                    div.innerHTML = '<span style="color: #6b7280; font-size: 0.875rem;">Image bientôt disponible</span>';
+                    element.parentNode.replaceChild(div, element);
+                }
+            }
+        }
+    }
+
+    function resetProductImage(productId, defaultImageUrl) {
+        const element = document.getElementById('product-image-' + productId);
+        if (element) {
+            if (defaultImageUrl && defaultImageUrl !== 'null' && defaultImageUrl !== '') {
+                // Remettre l'image par défaut
+                if (element.tagName === 'IMG') {
+                    element.src = defaultImageUrl;
+                } else {
+                    // Remplacer le div par une image
+                    const img = document.createElement('img');
+                    img.id = 'product-image-' + productId;
+                    img.src = defaultImageUrl;
+                    img.alt = 'Produit';
+                    img.style.cssText = 'width: 100%; height: 250px; object-fit: cover; display: block;';
+                    element.parentNode.replaceChild(img, element);
+                }
+            } else {
+                // Remettre le placeholder
+                if (element.tagName === 'IMG') {
+                    const div = document.createElement('div');
+                    div.id = 'product-image-' + productId;
+                    div.style.cssText = 'width: 100%; height: 250px; background-color: #e5e7eb; display: flex; align-items: center; justify-content: center;';
+                    div.innerHTML = '<span style="color: #6b7280; font-size: 0.875rem;">Image bientôt disponible</span>';
+                    element.parentNode.replaceChild(div, element);
+                }
+            }
+        }
+    }
+</script>

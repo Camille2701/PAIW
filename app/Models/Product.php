@@ -64,8 +64,13 @@ class Product extends Model implements HasMedia
 
     public function registerMediaCollections(): void
     {
+        // Collection principale pour compatibilité
         $this->addMediaCollection('color_images')
-              ->acceptsMimeTypes(['image/jpeg', 'image/png', 'image/webp']);
+              ->acceptsMimeTypes(['image/jpeg', 'image/png', 'image/webp'])
+              ->useDisk('public');
+
+        // Les collections dynamiques pour chaque couleur seront créées à la volée
+        // avec les bonnes configurations de disque et chemin
     }
 
     public function registerMediaConversions(Media $media = null): void
@@ -86,30 +91,32 @@ class Product extends Model implements HasMedia
      */
     public function getImageForColor($colorId, $conversion = 'thumb')
     {
-        $media = $this->getMedia('color_images')
-                     ->where('custom_properties.color_id', $colorId)
-                     ->first();
+        // Essayer d'abord la nouvelle approche avec collection séparée
+        $media = $this->getMedia("color_{$colorId}")->first();
 
-        if ($media) {
-            return $media->getUrl($conversion);
+        if (!$media) {
+            // Fallback vers l'ancienne approche avec customProperties
+            $media = $this->getMedia('color_images')
+                         ->where('custom_properties.color_id', $colorId)
+                         ->first();
         }
 
-        // Image par défaut si aucune image n'est trouvée
-        $color = \App\Models\Color::find($colorId);
-        $hexCode = $color ? str_replace('#', '', $color->hex_code) : 'cccccc';
+        if ($media) {
+            // Essayer d'abord la conversion demandée
+            try {
+                if ($media->hasGeneratedConversion($conversion)) {
+                    return $media->getUrl($conversion);
+                }
+            } catch (\Exception $e) {
+                // Ignore l'erreur et continue vers l'image originale
+            }
 
-        return "https://via.placeholder.com/300x300/{$hexCode}/ffffff?text=" . urlencode($this->name);
-    }
+            // Fallback vers l'image originale si la conversion n'existe pas
+            return $media->getUrl();
+        }
 
-    /**
-     * Obtenir toutes les couleurs qui ont des images
-     */
-    public function getColorsWithImages()
-    {
-        return $this->getMedia('color_images')
-                   ->pluck('custom_properties.color_id')
-                   ->unique()
-                   ->filter();
+        // Retourner null si aucune image n'est trouvée
+        return null;
     }
 
     /**
@@ -117,8 +124,56 @@ class Product extends Model implements HasMedia
      */
     public function hasImageForColor($colorId)
     {
-        return $this->getMedia('color_images')
+        // Vérifier les deux approches
+        return $this->getMedia("color_{$colorId}")->isNotEmpty() ||
+               $this->getMedia('color_images')
                    ->where('custom_properties.color_id', $colorId)
                    ->isNotEmpty();
+    }
+
+    /**
+     * Obtenir l'image par défaut du produit (première couleur avec image disponible)
+     */
+    public function getDefaultImage($conversion = 'thumb')
+    {
+        // Récupérer toutes les couleurs disponibles pour ce produit
+        $colors = $this->variants()->with('color')->get()->pluck('color')->unique('id');
+
+        foreach ($colors as $color) {
+            if ($this->hasImageForColor($color->id)) {
+                return $this->getImageForColor($color->id, $conversion);
+            }
+        }
+
+        // Si aucune image n'est trouvée, retourner null pour permettre un fallback CSS
+        return null;
+    }
+
+    /**
+     * Obtenir l'URL de l'image pour une couleur spécifique, avec fallback vers image par défaut
+     */
+    public function getImageUrl($colorId = null, $conversion = 'thumb')
+    {
+        if ($colorId && $this->hasImageForColor($colorId)) {
+            return $this->getImageForColor($colorId, $conversion);
+        }
+
+        return $this->getDefaultImage($conversion);
+    }
+
+    /**
+     * Vérifier si le produit a au moins une image
+     */
+    public function hasAnyImage()
+    {
+        $colors = $this->variants()->with('color')->get()->pluck('color')->unique('id');
+
+        foreach ($colors as $color) {
+            if ($this->hasImageForColor($color->id)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
