@@ -25,13 +25,23 @@
                                         <!-- Image du produit -->
                                         <div class="flex-shrink-0">
                                             <div class="w-24 h-32 bg-gray-200 rounded-lg overflow-hidden">
-                                                @if($item->productVariant && $item->productVariant->product)
-                                                    <div class="w-full h-full bg-gray-300 flex items-center justify-center">
-                                                        <span class="text-gray-500 text-xs">Image</span>
-                                                    </div>
+                                                @if($item->productVariant && $item->productVariant->product && $item->productVariant->color)
+                                                    @php
+                                                        // Obtenir l'image pour la couleur spécifique du variant
+                                                        $imageUrl = $item->productVariant->product->getImageUrl($item->productVariant->color->id, 'large');
+                                                    @endphp
+                                                    @if($imageUrl)
+                                                        <img src="{{ $imageUrl }}"
+                                                             alt="{{ $item->productVariant->product->name }} - {{ $item->productVariant->color->name }}"
+                                                             class="w-full h-full object-cover">
+                                                    @else
+                                                        <div class="w-full h-full bg-gray-300 flex items-center justify-center">
+                                                            <span class="text-gray-500 text-xs">Image bientôt disponible</span>
+                                                        </div>
+                                                    @endif
                                                 @else
                                                     <div class="w-full h-full bg-gray-300 flex items-center justify-center">
-                                                        <span class="text-gray-500 text-xs">Pas d'image</span>
+                                                        <span class="text-gray-500 text-xs">Image bientôt disponible</span>
                                                     </div>
                                                 @endif
                                             </div>
@@ -47,27 +57,33 @@
                                             </p>
                                             <p class="text-sm text-gray-600">
                                                 Couleur: {{ $item->productVariant->color->name ?? 'N/A' }}
-                                            </p>
-
-                                            <!-- Contrôles de quantité -->
-                                            <div class="flex items-center mt-4 space-x-3">
-                                                <label class="text-sm text-gray-600">Quantité:</label>
-                                                <div class="flex items-center border border-gray-300 rounded">
-                                                    <button wire:click="decreaseQuantity({{ $item->product_variant_id }})"
-                                                            type="button"
-                                                            class="px-3 py-1 text-gray-600 hover:text-gray-800 cursor-pointer">
-                                                        -
-                                                    </button>
-                                                    <span class="px-4 py-1 border-l border-r border-gray-300">
-                                                        {{ $item->quantity }}
-                                                    </span>
-                                                    <button wire:click="increaseQuantity({{ $item->product_variant_id }})"
-                                                            type="button"
-                                                            class="px-3 py-1 text-gray-600 hover:text-gray-800 cursor-pointer">
-                                                        +
-                                                    </button>
-                                                </div>
-                                            </div>
+                                            </p>                            <!-- Contrôles de quantité -->
+                            <div class="flex items-center mt-4 space-x-3">
+                                <label class="text-sm text-gray-600">Quantité:</label>
+                                <div class="flex items-center border border-gray-300 rounded-lg overflow-hidden bg-white shadow-sm">
+                                    <button wire:click="decreaseQuantity({{ $item->product_variant_id }})"
+                                            type="button"
+                                            class="px-3 py-2 text-gray-600 hover:text-white hover:bg-red-500 transition-all duration-200 cursor-pointer font-medium select-none"
+                                            title="{{ $item->quantity <= 1 ? 'Supprimer du panier' : 'Diminuer la quantité' }}">
+                                        -
+                                    </button>
+                                    <span class="px-4 py-2 border-l border-r border-gray-300 bg-gray-50 font-medium text-gray-900 min-w-[3rem] text-center">
+                                        {{ $item->quantity }}
+                                    </span>
+                                    <button wire:click="increaseQuantity({{ $item->product_variant_id }})"
+                                            type="button"
+                                            class="px-3 py-2 text-gray-600 font-medium select-none transition-all duration-200 {{ $item->quantity >= ($item->productVariant->stock ?? 0) ? 'opacity-50 cursor-not-allowed bg-gray-100' : 'hover:text-white hover:bg-green-500 cursor-pointer' }}"
+                                            {{ $item->quantity >= ($item->productVariant->stock ?? 0) ? 'disabled' : '' }}
+                                            title="{{ $item->quantity >= ($item->productVariant->stock ?? 0) ? 'Stock maximum atteint' : 'Augmenter la quantité' }}">
+                                        +
+                                    </button>
+                                </div>
+                                @if($item->productVariant && $item->productVariant->stock)
+                                    <span class="text-xs text-gray-500 font-medium">
+                                        ({{ $item->productVariant->stock }} en stock)
+                                    </span>
+                                @endif
+                            </div>
 
                                             <!-- Prix -->
                                             <div class="flex items-center justify-between mt-4">
@@ -76,7 +92,7 @@
                                                 </span>
                                                 <button wire:click="confirmDeleteItem({{ $item->product_variant_id }})"
                                                         type="button"
-                                                        class="text-red-600 hover:text-red-800 text-sm">
+                                                        class="text-red-600 hover:text-red-800 text-sm cursor-pointer">
                                                     Supprimer
                                                 </button>
                                             </div>

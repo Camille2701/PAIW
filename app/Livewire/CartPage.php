@@ -38,9 +38,17 @@ class CartPage extends Component
         // Trouver l'item actuel
         $currentItem = $this->cartItems->firstWhere('product_variant_id', $productVariantId);
         if ($currentItem) {
-            $cartService->updateQuantity($productVariantId, $currentItem->quantity + 1);
-            $this->refreshCart();
-            $this->dispatch('cartUpdated'); // Pour mettre à jour le compteur
+            // Vérifier le stock disponible
+            $availableStock = $currentItem->productVariant->stock ?? 0;
+
+            if ($currentItem->quantity < $availableStock) {
+                $cartService->updateQuantity($productVariantId, $currentItem->quantity + 1);
+                $this->refreshCart();
+                $this->dispatch('cartUpdated'); // Pour mettre à jour le compteur
+            } else {
+                // Afficher un message d'erreur si pas assez de stock
+                session()->flash('error', 'Stock insuffisant. Seulement ' . $availableStock . ' article(s) disponible(s).');
+            }
         }
     }
 
@@ -50,10 +58,16 @@ class CartPage extends Component
 
         // Trouver l'item actuel
         $currentItem = $this->cartItems->firstWhere('product_variant_id', $productVariantId);
-        if ($currentItem && $currentItem->quantity > 1) {
-            $cartService->updateQuantity($productVariantId, $currentItem->quantity - 1);
-            $this->refreshCart();
-            $this->dispatch('cartUpdated'); // Pour mettre à jour le compteur
+        if ($currentItem) {
+            if ($currentItem->quantity > 1) {
+                // Si quantité > 1, diminuer normalement
+                $cartService->updateQuantity($productVariantId, $currentItem->quantity - 1);
+                $this->refreshCart();
+                $this->dispatch('cartUpdated'); // Pour mettre à jour le compteur
+            } else {
+                // Si quantité = 1, déclencher la modal de suppression
+                $this->confirmDeleteItem($productVariantId);
+            }
         }
     }
 
