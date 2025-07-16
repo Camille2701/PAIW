@@ -29,7 +29,7 @@
             <div>
                 <h4 class="text-lg font-semibold text-white mb-4">Contact</h4>
                 <ul class="space-y-3 text-sm">
-                    <li class="text-gray-300"><a href="mailto:hello@paiw.fr" class="hover:underline">hello@paiw.fr</a></li>
+                    <li class="text-gray-300"><a href="mailto:contact@paiw.fr" class="hover:underline">contact@paiw.fr</a></li>
                     <li class="text-gray-300">+33 2 23 45 67 89</li>
                     <li class="text-gray-300">Nantes, France</li>
                 </ul>
