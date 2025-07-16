@@ -13,13 +13,13 @@ class HomePage extends Component
     public function mount()
     {
         // Récupérer les 3 produits les plus récents pour "Nos derniers arrivages"
-        $this->newArrivals = Product::with(['productType'])
+        $this->newArrivals = Product::with(['productType', 'variants.color'])
             ->orderBy('created_at', 'desc')
             ->take(3)
             ->get();
 
         // Récupérer 3 produits aléatoires pour "Nos coups de cœur"
-        $this->featuredProducts = Product::with(['productType'])
+        $this->featuredProducts = Product::with(['productType', 'variants.color'])
             ->inRandomOrder()
             ->take(3)
             ->get();

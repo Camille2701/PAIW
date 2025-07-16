@@ -48,8 +48,16 @@
                     @else
                         <div class="group cursor-pointer">
                     @endif
-                        <div class="bg-gray-300 h-80 w-full rounded-lg flex items-center justify-center mb-4 group-hover:shadow-lg transition-shadow duration-300">
-                            <span class="text-gray-600">{{ $product->name }}</span>
+                        <div class="h-80 w-full rounded-lg mb-4 group-hover:shadow-lg transition-shadow duration-300 overflow-hidden">
+                            @if(isset($product->id) && $product->getDefaultImage('large'))
+                                <img src="{{ $product->getDefaultImage('large') }}"
+                                     alt="{{ $product->name }}"
+                                     class="w-full h-full object-cover">
+                            @else
+                                <div class="bg-gray-300 h-full w-full flex items-center justify-center">
+                                    <span class="text-gray-600">Image bientôt disponible</span>
+                                </div>
+                            @endif
                         </div>
                         <h3 class="text-lg font-medium text-gray-900">{{ $product->name }}</h3>
                         <p class="text-gray-600">{{ number_format($product->price, 2) }}€</p>
@@ -104,8 +112,16 @@
                     @else
                         <div class="group cursor-pointer">
                     @endif
-                        <div class="bg-gray-300 h-80 w-full rounded-lg flex items-center justify-center mb-4 group-hover:shadow-lg transition-shadow duration-300">
-                            <span class="text-gray-600">{{ $product->name }}</span>
+                        <div class="h-80 w-full rounded-lg mb-4 group-hover:shadow-lg transition-shadow duration-300 overflow-hidden">
+                            @if(isset($product->id) && $product->getDefaultImage('large'))
+                                <img src="{{ $product->getDefaultImage('large') }}"
+                                     alt="{{ $product->name }}"
+                                     class="w-full h-full object-cover">
+                            @else
+                                <div class="bg-gray-300 h-full w-full flex items-center justify-center">
+                                    <span class="text-gray-600">Image bientôt disponible</span>
+                                </div>
+                            @endif
                         </div>
                         <h3 class="text-lg font-medium text-gray-900">{{ $product->name }}</h3>
                         <p class="text-gray-600">{{ number_format($product->price, 2) }}€</p>

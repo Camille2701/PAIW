@@ -82,6 +82,22 @@ class ProductPage extends Component
         $this->updateUrl();
     }
 
+    // Méthode pour obtenir l'image de la couleur sélectionnée
+    public function getCurrentImage($conversion = 'large')
+    {
+        if ($this->selectedColorId) {
+            return $this->product->getImageUrl($this->selectedColorId, $conversion);
+        }
+
+        return $this->product->getDefaultImage($conversion);
+    }
+
+    // Méthode pour vérifier si une couleur a une image
+    public function colorHasImage($colorId)
+    {
+        return $this->product->hasImageForColor($colorId);
+    }
+
     public function updatedSelectedSizeId()
     {
         $this->updateCurrentVariant();

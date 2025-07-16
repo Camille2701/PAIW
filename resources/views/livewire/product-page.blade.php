@@ -25,27 +25,22 @@
 
                 <!-- Section images -->
                 <div class="p-8">
-                    <div class="flex gap-4">
-                        <!-- Miniatures à gauche -->
-                        <div class="flex flex-col gap-3">
-                            @for($i = 1; $i <= 4; $i++)
-                            <div class="w-20 h-20 bg-gray-200 rounded-lg flex items-center justify-center cursor-pointer hover:bg-gray-300 transition-colors">
-                                <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                                </svg>
+                    <!-- Image principale uniquement -->
+                    <div class="aspect-square rounded-2xl overflow-hidden bg-gray-100">
+                        @if($this->getCurrentImage('large'))
+                            <img src="{{ $this->getCurrentImage('large') }}"
+                                 alt="{{ $product->name }}{{ $selectedColorId ? ' - ' . $availableColors->firstWhere('id', $selectedColorId)?->name : '' }}"
+                                 class="w-full h-full object-cover">
+                        @else
+                            <div class="w-full h-full bg-gray-200 flex items-center justify-center">
+                                <div class="text-center">
+                                    <svg class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                    </svg>
+                                    <p class="text-gray-500 text-lg">Image bientôt disponible</p>
+                                </div>
                             </div>
-                            @endfor
-                        </div>
-
-                        <!-- Image principale -->
-                        <div class="flex-1 aspect-square bg-gray-200 rounded-2xl flex items-center justify-center">
-                            <div class="text-center">
-                                <svg class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                                </svg>
-                                <p class="text-gray-500 text-lg">Photo du produit</p>
-                            </div>
-                        </div>
+                        @endif
                     </div>
                 </div>
 
