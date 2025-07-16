@@ -184,7 +184,24 @@
                             </div>
                         @empty
                             <div style="grid-column: span 3; text-align: center; padding: 4rem 0;">
-                                <p style="color: #6b7280; font-size: 1.1rem;">Aucun produit trouvé.</p>
+                                @if(!empty($search))
+                                    <p style="color: #6b7280; font-size: 1.1rem;">
+                                        Aucun produit trouvé pour "{{ $search }}" dans la section {{ $gender === 'men' ? 'Hommes' : 'Femmes' }}.
+                                    </p>
+                                    <p style="color: #6b7280; font-size: 0.9rem; margin-top: 1rem;">
+                                        Essayez de rechercher dans
+                                        <a href="{{ route($gender === 'men' ? 'shop.women' : 'shop.men', ['search' => $search]) }}"
+                                           style="color: #2563eb; text-decoration: underline;">
+                                            la section {{ $gender === 'men' ? 'Femmes' : 'Hommes' }}
+                                        </a>
+                                        ou modifiez vos filtres.
+                                    </p>
+                                @else
+                                    <p style="color: #6b7280; font-size: 1.1rem;">Aucun produit trouvé.</p>
+                                    <p style="color: #6b7280; font-size: 0.9rem; margin-top: 1rem;">
+                                        Essayez de modifier vos filtres ou parcourez notre collection complète.
+                                    </p>
+                                @endif
                             </div>
                         @endforelse
                     </div>
