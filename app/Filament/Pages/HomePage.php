@@ -29,7 +29,7 @@ class HomePage extends Page implements HasForms
     public function mount(): void
     {
         $instance = HomePageSettings::instance();
-        
+
         $this->form->fill([
             'hero_image' => $instance->getMedia('homepage-hero'),
             'promotion_image' => $instance->getMedia('homepage-promotion'),
@@ -122,17 +122,17 @@ class HomePage extends Page implements HasForms
     public function save(): void
     {
         $data = $this->form->getState();
-        
+
         // Sauvegarder les données du formulaire sur l'instance
         $this->form->model(HomePageSettings::instance())->saveRelationships();
-        
+
         Notification::make()
             ->success()
             ->title('Images mises à jour !')
             ->body('Les images de la page d\'accueil ont été mises à jour avec succès.')
             ->duration(5000)
             ->send();
-            
+
         // Actualiser les données
         $this->mount();
     }
