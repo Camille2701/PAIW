@@ -6,6 +6,7 @@ use Livewire\Component;
 use App\Models\Product;
 use App\Models\Color;
 use App\Models\Size;
+use App\Services\CartService;
 use Illuminate\Support\Facades\Log;
 
 class ProductPage extends Component
@@ -84,6 +85,22 @@ class ProductPage extends Component
     public function updatedSelectedSizeId()
     {
         $this->updateCurrentVariant();
+        // Ajuster la quantité si elle dépasse le stock disponible
+        if ($this->currentVariant && $this->quantity > $this->currentVariant->stock) {
+            $this->quantity = max(1, $this->currentVariant->stock);
+        }
+    }
+
+    public function updatedQuantity()
+    {
+        // S'assurer que la quantité ne dépasse pas le stock disponible
+        if ($this->currentVariant && $this->quantity > $this->currentVariant->stock) {
+            $this->quantity = $this->currentVariant->stock;
+        }
+        // S'assurer que la quantité est au minimum 1
+        if ($this->quantity < 1) {
+            $this->quantity = 1;
+        }
     }
 
     private function updateCurrentVariant()
@@ -116,7 +133,7 @@ class ProductPage extends Component
         }
     }
 
-    public function addToCart()
+    public function addToCart(CartService $cartService)
     {
         if (!$this->currentVariant) {
             session()->flash('error', 'Veuillez sélectionner une couleur et une taille.');
@@ -128,8 +145,18 @@ class ProductPage extends Component
             return;
         }
 
-        // Logique d'ajout au panier à implémenter
-        session()->flash('success', 'Produit ajouté au panier !');
+        try {
+            // Ajouter au panier en utilisant le service
+            $cartService->addToCart($this->currentVariant->id, $this->quantity);
+
+            // Émettre un événement pour mettre à jour le compteur du panier
+            $this->dispatch('cartUpdated');
+
+            session()->flash('success', 'Produit ajouté au panier !');
+        } catch (\Exception $e) {
+            Log::error('Erreur lors de l\'ajout au panier: ' . $e->getMessage());
+            session()->flash('error', 'Erreur lors de l\'ajout au panier.');
+        }
     }
 
     public function isSizeAvailable($sizeId)
@@ -148,6 +175,11 @@ class ProductPage extends Component
     public function isInStock()
     {
         return $this->currentVariant && $this->currentVariant->stock > 0;
+    }
+
+    public function getRemainingStock()
+    {
+        return $this->currentVariant ? $this->currentVariant->stock : 0;
     }
 
     public function canAddToCart()

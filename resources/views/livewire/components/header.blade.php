@@ -47,11 +47,11 @@
                 </a>
 
                 <!-- Panier -->
-                <a href="/panier" class="relative text-gray-700 hover:text-black transition-colors p-2" aria-label="Shopping cart">
+                <a href="/cart" class="relative text-gray-700 hover:text-black transition-colors p-2" aria-label="Shopping cart">
                     <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                     </svg>
-                    <span class="absolute -top-2 -right-2 h-4 w-4 bg-black text-white rounded-full text-xs flex items-center justify-center font-medium">0</span>
+                    @livewire('cart-counter')
                 </a>
 
                 <!-- Menu mobile -->
