@@ -4,14 +4,21 @@ namespace App\Livewire;
 
 use Livewire\Component;
 use App\Models\Product;
+use App\Models\HomePageSettings;
 
 class HomePage extends Component
 {
     public $featuredProducts = [];
     public $newArrivals = [];
+    public $heroImageUrl = null;
+    public $promotionImageUrl = null;
 
     public function mount()
     {
+        // Récupérer les images depuis HomePageSettings
+        $this->heroImageUrl = HomePageSettings::getHeroImageUrl();
+        $this->promotionImageUrl = HomePageSettings::getPromotionImageUrl();
+
         // Récupérer les 3 produits les plus récents pour "Nos derniers arrivages"
         $this->newArrivals = Product::with(['productType', 'variants.color'])
             ->orderBy('created_at', 'desc')

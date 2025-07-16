@@ -16,7 +16,6 @@ class ProductVariant extends Model implements HasMedia
         'size_id',
         'color_id',
         'stock',
-        'sku',
     ];
 
     protected static function boot()

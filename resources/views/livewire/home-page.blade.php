@@ -13,8 +13,16 @@
 
             <!-- Image principale hero -->
             <div class="mt-12">
-                <div class="bg-gray-300 h-96 w-full rounded-lg flex items-center justify-center">
-                    <span class="text-gray-600 text-lg">Image Hero Principale</span>
+                <div class="h-96 w-full rounded-lg overflow-hidden">
+                    @if($heroImageUrl)
+                        <img src="{{ $heroImageUrl }}"
+                             alt="Image Hero Principale"
+                             class="w-full h-full object-cover">
+                    @else
+                        <div class="bg-gray-300 h-full w-full flex items-center justify-center">
+                            <span class="text-gray-600 text-lg">Image Hero bientôt disponible</span>
+                        </div>
+                    @endif
                 </div>
             </div>
 
@@ -86,8 +94,16 @@
                         Découvrir notre histoire
                     </a>
                 </div>
-                <div class="bg-gray-300 h-96 w-full rounded-lg flex items-center justify-center">
-                    <span class="text-gray-600 text-lg">Image Promotionnelle</span>
+                <div class="h-96 w-full rounded-lg overflow-hidden">
+                    @if($promotionImageUrl)
+                        <img src="{{ $promotionImageUrl }}"
+                             alt="Image Promotionnelle"
+                             class="w-full h-full object-cover">
+                    @else
+                        <div class="bg-gray-300 h-full w-full flex items-center justify-center">
+                            <span class="text-gray-600 text-lg">Image promotionnelle bientôt disponible</span>
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>

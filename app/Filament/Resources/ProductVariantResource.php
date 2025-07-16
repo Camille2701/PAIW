@@ -58,15 +58,9 @@ class ProductVariantResource extends Resource
                     ])
                     ->columns(3),
 
-                Forms\Components\Section::make('Stock et identification')
-                    ->description('Gestion des stocks et référence produit')
+                Forms\Components\Section::make('Stock')
+                    ->description('Gestion des stocks')
                     ->schema([
-                        Forms\Components\TextInput::make('sku')
-                            ->label('SKU (Référence)')
-                            ->maxLength(255)
-                            ->unique(ignoreRecord: true)
-                            ->placeholder('Ex: TSH-BLU-M-001'),
-
                         Forms\Components\TextInput::make('stock')
                             ->label('Quantité en stock')
                             ->required()
@@ -75,7 +69,7 @@ class ProductVariantResource extends Resource
                             ->default(0)
                             ->step(1),
                     ])
-                    ->columns(2),
+                    ->columns(1),
             ]);
     }
 
@@ -88,15 +82,6 @@ class ProductVariantResource extends Resource
                     ->sortable()
                     ->searchable()
                     ->weight('bold'),
-
-                Tables\Columns\TextColumn::make('sku')
-                    ->label('SKU')
-                    ->searchable()
-                    ->copyable()
-                    ->badge()
-                    ->color('gray')
-                    ->placeholder('Non disponible')
-                    ->formatStateUsing(fn ($state) => $state ?: 'Non disponible'),
 
                 Tables\Columns\TextColumn::make('size.label')
                     ->label('Taille')
@@ -218,14 +203,6 @@ class ProductVariantResource extends Resource
             ->schema([
                 Section::make('Informations de la variante')
                     ->schema([
-                        TextEntry::make('sku')
-                            ->label('SKU')
-                            ->copyable()
-                            ->badge()
-                            ->color('gray')
-                            ->placeholder('Aucun SKU défini')
-                            ->formatStateUsing(fn ($state) => $state ?: 'Non défini'),
-
                         TextEntry::make('product.name')
                             ->label('Produit')
                             ->size('lg')
