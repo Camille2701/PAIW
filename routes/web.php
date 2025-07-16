@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 use App\Livewire\HomePage;
 use App\Livewire\ShopPage;
 use App\Livewire\ProductPage;
@@ -22,3 +23,8 @@ Route::get('/cart', CartPage::class)->name('cart.index');
 Route::get('/panier', function() {
     return redirect('/cart');
 })->name('panier');
+
+// Route pour le profil utilisateur (temporaire)
+Route::get('/profile', function() {
+    return view('profile', ['user' => Auth::user()]);
+})->middleware('auth')->name('profile');
