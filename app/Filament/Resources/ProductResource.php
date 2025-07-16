@@ -13,8 +13,14 @@ use Filament\Tables\Table;
 use Filament\Infolists\Infolist;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\ImageEntry;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Group;
+use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\Actions;
+use Illuminate\Support\Facades\Log;
 
 class ProductResource extends Resource
 {
@@ -79,6 +85,78 @@ class ProductResource extends Resource
                             ->minValue(0),
                     ])
                     ->columns(1),
+
+                Forms\Components\Section::make('Images par couleur')
+                    ->description('Gérez les images pour chaque couleur de ce produit')
+                    ->hidden(fn ($operation) => $operation === 'create')
+                    ->schema([
+                        Forms\Components\Placeholder::make('color_instructions')
+                            ->label('Instructions')
+                            ->content('Les couleurs ci-dessous correspondent aux variantes existantes de ce produit. Vous pouvez ajouter ou modifier les images pour chaque couleur.')
+                            ->columnSpanFull(),
+
+                        Repeater::make('color_images')
+                            ->label('')
+                            ->schema([
+                                Group::make([
+                                    Forms\Components\Select::make('color_id')
+                                        ->label('Couleur')
+                                        ->options(function ($record) {
+                                            if ($record) {
+                                                // Récupérer les couleurs des variants existants
+                                                $existingColors = $record->variants()->with('color')->get()
+                                                    ->pluck('color')->filter()->unique('id')
+                                                    ->pluck('name', 'id')->toArray();
+
+                                                // Ajouter toutes les autres couleurs
+                                                $allColors = \App\Models\Color::all()->pluck('name', 'id')->toArray();
+
+                                                return $existingColors + $allColors;
+                                            }
+                                            return \App\Models\Color::all()->pluck('name', 'id');
+                                        })
+                                        ->searchable()
+                                        ->required()
+                                        ->distinct()
+                                        ->disableOptionsWhenSelectedInSiblingRepeaterItems(),
+
+                                    SpatieMediaLibraryFileUpload::make('image')
+                                        ->label('Image')
+                                        ->collection('color_images')
+                                        ->image()
+                                        ->imageEditor()
+                                        ->customProperties(fn (callable $get) => [
+                                            'color_id' => $get('color_id')
+                                        ])
+                                        ->helperText('Aucune image sélectionnée'),
+                                ])->columns(2)
+                            ])
+                            ->addActionLabel('Ajouter une image de couleur')
+                            ->reorderable(false)
+                            ->collapsible()
+                            ->itemLabel(fn (array $state): ?string =>
+                                $state['color_id'] ? \App\Models\Color::find($state['color_id'])?->name : 'Nouvelle couleur'
+                            )
+                            ->columnSpanFull()
+                            ->mutateRelationshipDataBeforeFillUsing(function (array $data, $record): array {
+                                // Pré-charger les couleurs existantes avec leurs images
+                                if ($record) {
+                                    $variants = $record->variants()->with('color')->get();
+                                    $colors = $variants->pluck('color')->filter()->unique('id');
+
+                                    $result = [];
+                                    foreach ($colors as $color) {
+                                        $result[] = [
+                                            'color_id' => $color->id,
+                                        ];
+                                    }
+
+                                    return $result;
+                                }
+
+                                return $data;
+                            }),
+                    ]),
             ]);
     }
 
@@ -109,6 +187,15 @@ class ProductResource extends Resource
                     ->counts('variants')
                     ->badge()
                     ->color('warning'),
+
+                Tables\Columns\TextColumn::make('colors_count')
+                    ->label('Couleurs')
+                    ->getStateUsing(function ($record) {
+                        return $record->variants()->distinct('color_id')->count('color_id');
+                    })
+                    ->badge()
+                    ->color('info')
+                    ->alignment('center'),
 
                 Tables\Columns\TextColumn::make('slug')
                     ->label('Slug')
@@ -200,7 +287,25 @@ class ProductResource extends Resource
                                 return $record->variants()->count();
                             }),
                     ])
-                    ->columns(1),
+                    ->columns(1),                Section::make()
+                    ->heading(function ($record) {
+                        $variants = $record->variants()->with('color')->get();
+                        $colors = $variants->pluck('color')->unique('id');
+                        $colorCount = $colors->count();
+
+                        return "Couleurs : {$colorCount}";
+                    })
+                    ->schema([
+                        TextEntry::make('product_colors_list')
+                            ->label('')
+                            ->getStateUsing(function ($record) {
+                                $variants = $record->variants()->with('color')->get();
+                                $colors = $variants->pluck('color')->filter()->unique('id');
+                                $colorNames = $colors->pluck('name')->toArray();
+
+                                return implode(', ', $colorNames);
+                            }),
+                    ]),
 
                 Section::make('Informations système')
                     ->schema([
