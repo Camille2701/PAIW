@@ -6,15 +6,38 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
 class ProductTypeSeeder extends Seeder
-{
-    public function run(): void
+{    public function run(): void
     {
         DB::table('product_types')->insert([
-            ['name' => 't-shirt'],
-            ['name' => 'sweat'],
-            ['name' => 'veste polaire'],
-            ['name' => 'pantalon'],
-            ['name' => 'jeans'],
+            // Vêtements pour hommes
+            ['name' => 'T-shirt', 'gender' => 'men'],
+            ['name' => 'Sweat', 'gender' => 'men'],
+            ['name' => 'Veste polaire', 'gender' => 'men'],
+            ['name' => 'Pantalon', 'gender' => 'men'],
+            ['name' => 'Jeans', 'gender' => 'men'],
+            ['name' => 'Chemise', 'gender' => 'men'],
+            ['name' => 'Pull', 'gender' => 'men'],
+
+            // Vêtements pour femmes
+            ['name' => 'T-shirt', 'gender' => 'women'],
+            ['name' => 'Blouse', 'gender' => 'women'],
+            ['name' => 'Robe', 'gender' => 'women'],
+            ['name' => 'Jupe', 'gender' => 'women'],
+            ['name' => 'Pantalon', 'gender' => 'women'],
+            ['name' => 'Jeans', 'gender' => 'women'],
+            ['name' => 'Pull', 'gender' => 'women'],
+            ['name' => 'Cardigan', 'gender' => 'women'],
+            ['name' => 'Veste', 'gender' => 'women'],
+
+            // Vêtements unisexes
+            ['name' => 'Hoodie', 'gender' => 'unisex'],
+            ['name' => 'Sweat-shirt', 'gender' => 'unisex'],
+            ['name' => 'T-shirt oversize', 'gender' => 'unisex'],
+            ['name' => 'Jogger', 'gender' => 'unisex'],
+            ['name' => 'Short', 'gender' => 'unisex'],
+            ['name' => 'Casquette', 'gender' => 'unisex'],
+            ['name' => 'Bonnet', 'gender' => 'unisex'],
+            ['name' => 'Chaussettes', 'gender' => 'unisex'],
         ]);
     }
 }

@@ -7,11 +7,57 @@ use Livewire\Component;
 class Header extends Component
 {
     public $searchQuery = '';
+    public $showSearchModal = false;
+    public $showUserMenu = false;
+    public $showMobileMenu = false;
 
     public function search()
     {
-        // Logique de recherche à implémenter
-        $this->dispatch('search-performed', $this->searchQuery);
+        if (empty($this->searchQuery)) {
+            return;
+        }
+
+        // Si on est sur la page d'accueil, afficher une modal
+        if (request()->is('/')) {
+            $this->showSearchModal = true;
+        } else {
+            // Sinon, rediriger vers la page shop avec la recherche
+            return redirect('/shop/men?search=' . urlencode($this->searchQuery));
+        }
+    }
+
+    public function goToShop()
+    {
+        if (!empty($this->searchQuery)) {
+            return redirect('/shop/men?search=' . urlencode($this->searchQuery));
+        }
+        return redirect('/shop/men');
+    }
+
+    public function closeModal()
+    {
+        $this->showSearchModal = false;
+        $this->searchQuery = '';
+    }
+
+    public function toggleUserMenu()
+    {
+        $this->showUserMenu = !$this->showUserMenu;
+    }
+
+    public function closeUserMenu()
+    {
+        $this->showUserMenu = false;
+    }
+
+    public function toggleMobileMenu()
+    {
+        $this->showMobileMenu = !$this->showMobileMenu;
+    }
+
+    public function closeMobileMenu()
+    {
+        $this->showMobileMenu = false;
     }
 
     public function render()

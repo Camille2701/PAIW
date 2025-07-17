@@ -3,26 +3,50 @@
 namespace App\Livewire;
 
 use Livewire\Component;
+use App\Models\Product;
+use App\Models\HomePageSettings;
 
 class HomePage extends Component
 {
     public $featuredProducts = [];
     public $newArrivals = [];
+    public $heroImageUrl = null;
+    public $promotionImageUrl = null;
 
     public function mount()
     {
-        // Simulation de données de produits - à remplacer par des vraies données
-        $this->featuredProducts = [
-            ['id' => 1, 'name' => 'Veste Vintage', 'price' => '89€', 'image' => '/images/placeholder1.jpg'],
-            ['id' => 2, 'name' => 'Robe Rétro', 'price' => '65€', 'image' => '/images/placeholder2.jpg'],
-            ['id' => 3, 'name' => 'Pantalon Vintage', 'price' => '45€', 'image' => '/images/placeholder3.jpg'],
-        ];
+        // Récupérer les images depuis HomePageSettings
+        $this->heroImageUrl = HomePageSettings::getHeroImageUrl();
+        $this->promotionImageUrl = HomePageSettings::getPromotionImageUrl();
 
-        $this->newArrivals = [
-            ['id' => 4, 'name' => 'Chemise Vintage', 'price' => '55€', 'image' => '/images/placeholder4.jpg'],
-            ['id' => 5, 'name' => 'Jupe Rétro', 'price' => '40€', 'image' => '/images/placeholder5.jpg'],
-            ['id' => 6, 'name' => 'Pull Vintage', 'price' => '70€', 'image' => '/images/placeholder6.jpg'],
-        ];
+        // Récupérer les 3 produits les plus récents pour "Nos derniers arrivages"
+        $this->newArrivals = Product::with(['productType', 'variants.color'])
+            ->orderBy('created_at', 'desc')
+            ->take(3)
+            ->get();
+
+        // Récupérer 3 produits aléatoires pour "Nos coups de cœur"
+        $this->featuredProducts = Product::with(['productType', 'variants.color'])
+            ->inRandomOrder()
+            ->take(3)
+            ->get();
+
+        // Si nous n'avons pas assez de produits, utilisez des données de simulation
+        if ($this->newArrivals->isEmpty()) {
+            $this->newArrivals = collect([
+                (object)['name' => 'Veste Vintage', 'price' => 89.00, 'slug' => 'veste-vintage', 'productType' => (object)['gender' => 'men']],
+                (object)['name' => 'Robe Rétro', 'price' => 65.00, 'slug' => 'robe-retro', 'productType' => (object)['gender' => 'women']],
+                (object)['name' => 'Pantalon Vintage', 'price' => 45.00, 'slug' => 'pantalon-vintage', 'productType' => (object)['gender' => 'men']],
+            ]);
+        }
+
+        if ($this->featuredProducts->isEmpty()) {
+            $this->featuredProducts = collect([
+                (object)['name' => 'Chemise Vintage', 'price' => 55.00, 'slug' => 'chemise-vintage', 'productType' => (object)['gender' => 'men']],
+                (object)['name' => 'Jupe Rétro', 'price' => 40.00, 'slug' => 'jupe-retro', 'productType' => (object)['gender' => 'women']],
+                (object)['name' => 'Pull Vintage', 'price' => 70.00, 'slug' => 'pull-vintage', 'productType' => (object)['gender' => 'women']],
+            ]);
+        }
     }
 
     public function render()

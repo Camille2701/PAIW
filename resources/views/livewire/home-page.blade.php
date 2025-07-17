@@ -6,15 +6,23 @@
                 <h1 class="text-4xl md:text-6xl font-bold text-gray-900 mb-8">
                     De meilleurs vêtements pour la planète
                 </h1>
-                <button class="bg-white border-2 border-black text-black px-8 py-3 text-lg font-medium hover:bg-black hover:text-white transition-colors duration-300">
+                <a href="{{ route('shop') }}" class="bg-white border-2 border-black text-black px-8 py-3 text-lg font-medium hover:bg-black hover:text-white transition-colors duration-300 cursor-pointer inline-block">
                     Acheter
-                </button>
+                </a>
             </div>
-            
+
             <!-- Image principale hero -->
             <div class="mt-12">
-                <div class="bg-gray-300 h-96 w-full rounded-lg flex items-center justify-center">
-                    <span class="text-gray-600 text-lg">Image Hero Principale</span>
+                <div class="h-96 w-full rounded-lg overflow-hidden">
+                    @if($heroImageUrl)
+                        <img src="{{ $heroImageUrl }}"
+                             alt="Image Hero Principale"
+                             class="w-full h-full object-cover">
+                    @else
+                        <div class="bg-gray-300 h-full w-full flex items-center justify-center">
+                            <span class="text-gray-600 text-lg">Image Hero bientôt disponible</span>
+                        </div>
+                    @endif
                 </div>
             </div>
 
@@ -35,21 +43,47 @@
                 <h2 class="text-3xl md:text-5xl font-bold text-gray-900 mb-8">
                     Nos derniers arrivages
                 </h2>
-                <button class="bg-white border-2 border-black text-black px-8 py-3 text-lg font-medium hover:bg-black hover:text-white transition-colors duration-300">
+                <a href="{{ route('shop') }}" class="bg-white border-2 border-black text-black px-8 py-3 text-lg font-medium hover:bg-black hover:text-white transition-colors duration-300 cursor-pointer inline-block">
                     Acheter
-                </button>
+                </a>
             </div>
 
             <!-- Grille de produits -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
                 @foreach($newArrivals as $product)
-                <div class="group cursor-pointer">
-                    <div class="bg-gray-300 h-80 w-full rounded-lg flex items-center justify-center mb-4 group-hover:shadow-lg transition-shadow duration-300">
-                        <span class="text-gray-600">{{ $product['name'] }}</span>
-                    </div>
-                    <h3 class="text-lg font-medium text-gray-900">{{ $product['name'] }}</h3>
-                    <p class="text-gray-600">{{ $product['price'] }}</p>
-                </div>
+                    @if(isset($product->id))
+                        @php
+                            $gender = $product->productType->gender === 'unisex' ? 'men' : $product->productType->gender;
+                        @endphp
+                        <a href="{{ route('product.' . $gender, $product->slug) }}" class="group cursor-pointer block">
+                    @else
+                        <div class="group cursor-pointer">
+                    @endif
+                        <div class="h-80 w-full rounded-lg mb-4 group-hover:shadow-lg transition-shadow duration-300 overflow-hidden">
+                            @if(isset($product->id) && $product->getDefaultImage('large'))
+                                <img src="{{ $product->getDefaultImage('large') }}"
+                                     alt="{{ $product->name }}"
+                                     class="w-full h-full object-cover">
+                            @else
+                                <div class="bg-gray-300 h-full w-full flex items-center justify-center">
+                                    <span class="text-gray-600">Image bientôt disponible</span>
+                                </div>
+                            @endif
+                        </div>
+                        <h3 class="text-lg font-medium text-gray-900">
+                            {{ $product->name }}
+                            @if(isset($product->id) && $product->productType->gender === 'unisex')
+                                <span class="text-xs text-green-600 bg-green-100 px-2 py-1 rounded ml-2">
+                                    Unisexe
+                                </span>
+                            @endif
+                        </h3>
+                        <p class="text-gray-600">{{ number_format($product->price, 2) }}€</p>
+                    @if(isset($product->id))
+                        </a>
+                    @else
+                        </div>
+                    @endif
                 @endforeach
             </div>
         </div>
@@ -66,12 +100,20 @@
                     <p class="text-lg text-gray-600 mb-8">
                         Découvrez notre collection de vêtements vintage soigneusement sélectionnés pour leur qualité et leur style intemporel. Chaque pièce raconte une histoire unique.
                     </p>
-                    <button class="bg-black text-white px-8 py-3 text-lg font-medium hover:bg-gray-800 transition-colors duration-300">
+                    <a href="/about" class="bg-black text-white px-8 py-3 text-lg font-medium hover:bg-gray-800 transition-colors duration-300 cursor-pointer inline-block">
                         Découvrir notre histoire
-                    </button>
+                    </a>
                 </div>
-                <div class="bg-gray-300 h-96 w-full rounded-lg flex items-center justify-center">
-                    <span class="text-gray-600 text-lg">Image Promotionnelle</span>
+                <div class="h-96 w-full rounded-lg overflow-hidden">
+                    @if($promotionImageUrl)
+                        <img src="{{ $promotionImageUrl }}"
+                             alt="Image Promotionnelle"
+                             class="w-full h-full object-cover">
+                    @else
+                        <div class="bg-gray-300 h-full w-full flex items-center justify-center">
+                            <span class="text-gray-600 text-lg">Image promotionnelle bientôt disponible</span>
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>
@@ -91,20 +133,46 @@
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 @foreach($featuredProducts as $product)
-                <div class="group cursor-pointer">
-                    <div class="bg-gray-300 h-80 w-full rounded-lg flex items-center justify-center mb-4 group-hover:shadow-lg transition-shadow duration-300">
-                        <span class="text-gray-600">{{ $product['name'] }}</span>
-                    </div>
-                    <h3 class="text-lg font-medium text-gray-900">{{ $product['name'] }}</h3>
-                    <p class="text-gray-600">{{ $product['price'] }}</p>
-                </div>
+                    @if(isset($product->id))
+                        @php
+                            $gender = $product->productType->gender === 'unisex' ? 'men' : $product->productType->gender;
+                        @endphp
+                        <a href="{{ route('product.' . $gender, $product->slug) }}" class="group cursor-pointer block">
+                    @else
+                        <div class="group cursor-pointer">
+                    @endif
+                        <div class="h-80 w-full rounded-lg mb-4 group-hover:shadow-lg transition-shadow duration-300 overflow-hidden">
+                            @if(isset($product->id) && $product->getDefaultImage('large'))
+                                <img src="{{ $product->getDefaultImage('large') }}"
+                                     alt="{{ $product->name }}"
+                                     class="w-full h-full object-cover">
+                            @else
+                                <div class="bg-gray-300 h-full w-full flex items-center justify-center">
+                                    <span class="text-gray-600">Image bientôt disponible</span>
+                                </div>
+                            @endif
+                        </div>
+                        <h3 class="text-lg font-medium text-gray-900">
+                            {{ $product->name }}
+                            @if(isset($product->id) && $product->productType->gender === 'unisex')
+                                <span class="text-xs text-green-600 bg-green-100 px-2 py-1 rounded ml-2">
+                                    Unisexe
+                                </span>
+                            @endif
+                        </h3>
+                        <p class="text-gray-600">{{ number_format($product->price, 2) }}€</p>
+                    @if(isset($product->id))
+                        </a>
+                    @else
+                        </div>
+                    @endif
                 @endforeach
             </div>
 
             <div class="text-center mt-12">
-                <button class="bg-white border-2 border-black text-black px-8 py-3 text-lg font-medium hover:bg-black hover:text-white transition-colors duration-300">
+                <a href="{{ route('shop') }}" class="bg-white border-2 border-black text-black px-8 py-3 text-lg font-medium hover:bg-black hover:text-white transition-colors duration-300 cursor-pointer inline-block">
                     Voir toute la collection
-                </button>
+                </a>
             </div>
         </div>
     </section>

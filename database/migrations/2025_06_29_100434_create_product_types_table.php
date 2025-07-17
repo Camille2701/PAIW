@@ -13,7 +13,9 @@ return new class extends Migration {
         Schema::create('product_types', function (Blueprint $table) {
             $table->id();
             $table->string('name'); // ex: t-shirt, sweat, pantalon
+            $table->enum('gender', ['men', 'women', 'unisex'])->default('unisex');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
