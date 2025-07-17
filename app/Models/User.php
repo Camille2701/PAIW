@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\MediaLibrary\HasMedia;
@@ -105,5 +106,13 @@ class User extends Authenticatable implements HasMedia
         }
 
         return "https://ui-avatars.com/api/?name=" . urlencode($this->name) . "&size=150&background=6366f1&color=ffffff";
+    }
+
+    /**
+     * Relation avec les commandes
+     */
+    public function orders(): HasMany
+    {
+        return $this->hasMany(Order::class);
     }
 }

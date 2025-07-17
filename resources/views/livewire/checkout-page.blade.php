@@ -158,7 +158,7 @@
                                 <!-- Bouton continuer -->
                                 <div class="pt-4">
                                     <button type="submit"
-                                            class="w-full bg-black text-white py-3 px-4 rounded-md hover:bg-gray-800 transition duration-200 font-medium">
+                                            class="w-full bg-black text-white py-3 px-4 rounded-md hover:bg-gray-800 transition duration-200 font-medium cursor-pointer">
                                         Passer à la livraison
                                     </button>
                                 </div>
@@ -219,7 +219,7 @@
                                     <!-- Bouton continuer -->
                                     <div class="pt-4">
                                         <button type="submit"
-                                                class="w-full bg-black text-white py-3 px-4 rounded-md hover:bg-gray-800 transition duration-200 font-medium">
+                                                class="w-full bg-black text-white py-3 px-4 rounded-md hover:bg-gray-800 transition duration-200 font-medium cursor-pointer">
                                             Passer au paiement
                                         </button>
                                     </div>
@@ -289,7 +289,7 @@
                                         <div class="pt-4">
                                             <button type="submit"
                                                     :disabled="$wire.processing_payment"
-                                                    class="w-full bg-black text-white py-3 px-4 rounded-md hover:bg-gray-800 transition duration-200 font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2">
+                                                    class="w-full bg-black text-white py-3 px-4 rounded-md hover:bg-gray-800 transition duration-200 font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2 cursor-pointer">
                                                 <span wire:loading.remove wire:target="processPayment">Payer par carte</span>
                                                 <span wire:loading wire:target="processPayment" class="flex items-center space-x-2">
                                                     <svg class="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none">
@@ -369,15 +369,16 @@
                                 @endif
                             </div>                            <!-- Code de coupon -->
                             <div class="mb-6">
+                                <h3 class="text-sm font-medium text-gray-900 mb-3">Code de réduction</h3>
                                 @if(!$coupon_applied)
                                     <div class="flex space-x-2">
                                         <input type="text"
                                                wire:model="coupon_code"
-                                               placeholder="Entrez le code de coupon ici (ex: PAIW10)"
-                                               class="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm">
+                                               placeholder="Entrez votre code"
+                                               class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
                                         <button wire:click="applyCoupon"
                                                 type="button"
-                                                class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-sm font-medium">
+                                                class="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors text-sm font-medium cursor-pointer">
                                             Appliquer
                                         </button>
                                     </div>
@@ -385,21 +386,20 @@
                                         <p class="text-sm mt-2 {{ $coupon_applied ? 'text-green-600' : 'text-red-600' }}">{{ $coupon_message }}</p>
                                     @endif
                                 @else
-                                    <div class="bg-green-50 border border-green-200 rounded-md p-3">
+                                    <div class="bg-green-50 border border-green-200 rounded-lg p-3">
                                         <div class="flex items-center justify-between">
                                             <div class="flex items-center">
                                                 <svg class="w-4 h-4 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
                                                     <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
                                                 </svg>
-                                                <span class="text-sm font-medium text-green-800">Coupon PAIW10 appliqué</span>
+                                                <span class="text-sm font-medium text-green-800">Coupon {{ strtoupper($coupon_code) }} appliqué</span>
                                             </div>
                                             <button wire:click="removeCoupon"
                                                     type="button"
-                                                    class="text-green-600 hover:text-green-800 text-sm underline">
+                                                    class="text-green-600 hover:text-green-800 text-sm underline cursor-pointer">
                                                 Retirer
                                             </button>
                                         </div>
-                                        <p class="text-xs text-green-600 mt-1">10% de réduction appliquée</p>
                                     </div>
                                 @endif
                             </div>
