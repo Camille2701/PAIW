@@ -159,17 +159,19 @@
                                             <div class="flex-1 min-w-0">
                                                 <h3 class="text-sm font-medium text-gray-900 mb-1 truncate">
                                                     {{ $product->name }}
-                                                    @if($product->productType->gender === 'unisex')
-                                                        <span class="inline-block text-xs text-green-700 bg-green-100 px-1 py-0.5 rounded ml-1">
-                                                            Unisexe
-                                                        </span>
-                                                    @endif
                                                 </h3>
                                                 <p class="text-sm text-gray-900 font-medium">{{ number_format($product->price, 2) }}€</p>
                                             </div>
-                                            <span class="text-xs text-gray-600 bg-gray-100 px-2 py-1 rounded ml-2 whitespace-nowrap">
-                                                {{ $product->productType->name }}
-                                            </span>
+                                            <div class="ml-2 text-right">
+                                                <span class="text-xs text-gray-600 bg-gray-100 px-2 py-1 rounded whitespace-nowrap block">
+                                                    {{ $product->productType->name }}
+                                                </span>
+                                                @if($product->productType->gender === 'unisex')
+                                                    <span class="inline-block text-xs text-green-700 bg-green-100 px-1 py-0.5 rounded mt-1">
+                                                        Unisexe
+                                                    </span>
+                                                @endif
+                                            </div>
                                         </div>
                                     </a>
 
