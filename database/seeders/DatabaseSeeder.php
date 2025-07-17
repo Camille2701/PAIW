@@ -17,8 +17,13 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Désactiver les vérifications de clés étrangères pour éviter les erreurs de contraintes
-        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        // Pour SQLite, on utilise PRAGMA foreign_keys au lieu de SET FOREIGN_KEY_CHECKS
+        if (DB::getDriverName() === 'sqlite') {
+            DB::statement('PRAGMA foreign_keys=OFF;');
+        } else {
+            // Désactiver les vérifications de clés étrangères pour MySQL
+            DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        }
 
         // Vider d'abord les tables qui ont des clés étrangères vers d'autres tables
         // Cela évite les erreurs de contraintes lors du truncate
@@ -34,6 +39,10 @@ class DatabaseSeeder extends Seeder
         ]);
 
         // Réactiver les vérifications de clés étrangères
-        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+        if (DB::getDriverName() === 'sqlite') {
+            DB::statement('PRAGMA foreign_keys=ON;');
+        } else {
+            DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+        }
     }
 }
