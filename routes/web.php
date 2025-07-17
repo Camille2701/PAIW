@@ -1,13 +1,16 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Auth;
 use App\Livewire\HomePage;
 use App\Livewire\ShopPage;
 use App\Livewire\ProductPage;
 use App\Livewire\CartPage;
 use App\Livewire\CheckoutPage;
 use App\Livewire\OrderConfirmation;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SecurityController;
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\EmailVerificationController;
 
 Route::get('/', HomePage::class)->name('home');
 Route::get('/shop', function() {
@@ -34,40 +37,19 @@ Route::get('/order/confirmation/{orderId}', OrderConfirmation::class)->name('ord
 
 // Routes pour le profil utilisateur
 Route::middleware('auth')->group(function () {
-    Route::get('/profile', function() {
-        return view('profile.profile', ['user' => Auth::user()]);
-    })->name('profile');
+    // Routes pour le profil
+    Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
+    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
 
-    Route::put('/profile', function() {
-        $user = Auth::user();
-        $section = request('section');
+    // Routes pour la sécurité
+    Route::get('/profile/security', [SecurityController::class, 'show'])->name('profile.security');
+    Route::put('/profile/security', [SecurityController::class, 'updatePassword'])->name('profile.security.update');
 
-        if ($section === 'personal') {
-            $validated = request()->validate([
-                'name' => 'required|string|max:255',
-                'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
-                'first_name' => 'nullable|string|max:255',
-                'last_name' => 'nullable|string|max:255',
-            ]);
-        } elseif ($section === 'address') {
-            $validated = request()->validate([
-                'street' => 'nullable|string|max:255',
-                'postal_code' => 'nullable|string|max:10',
-                'department' => 'nullable|string|max:255',
-                'country' => 'nullable|string|max:255',
-            ]);
-        }
+    // Routes pour les commandes
+    Route::get('/profile/orders', [OrderController::class, 'index'])->name('profile.orders');
 
-        $user->update($validated);
-
-        return redirect()->route('profile')->with('success', 'Profil mis à jour avec succès !');
-    })->name('profile.update');
-
-    Route::get('/profile/security', function() {
-        return view('profile.security', ['user' => Auth::user()]);
-    })->name('profile.security');
-
-    Route::get('/profile/orders', function() {
-        return view('profile.orders', ['user' => Auth::user()]);
-    })->name('profile.orders');
+    // Route pour la vérification d'email
+    Route::post('/email/verification-notification', [EmailVerificationController::class, 'send'])
+         ->middleware('throttle:6,1')
+         ->name('verification.send');
 });
