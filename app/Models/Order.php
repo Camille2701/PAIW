@@ -27,6 +27,7 @@ class Order extends Model
         'postal_code',
         'shipping_method',
         'coupon_code',
+        'coupon_discount',
     ];
 
     protected $casts = [
@@ -47,6 +48,8 @@ class Order extends Model
 
     public function getSubtotalAttribute()
     {
-        return $this->total_price + $this->shipping_price + $this->discount_amount;
+        return $this->orderItems->sum(function ($item) {
+            return $item->quantity * $item->unit_price;
+        });
     }
 }

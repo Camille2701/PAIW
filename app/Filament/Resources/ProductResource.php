@@ -212,32 +212,38 @@ class ProductResource extends Resource
     {
         return $infolist
             ->schema([
-                Section::make('Informations du produit')
+                Section::make('🛍️ Informations du produit')
+                    ->description('Détails principaux du produit')
                     ->schema([
                         TextEntry::make('name')
-                            ->label('Nom')
+                            ->label('👕 Nom')
                             ->size('lg')
-                            ->weight('bold'),
+                            ->weight('bold')
+                            ->icon('heroicon-o-tag'),
 
                         TextEntry::make('slug')
-                            ->label('Slug')
+                            ->label('🔗 Slug')
                             ->copyable()
                             ->copyMessage('Slug copié!')
-                            ->badge(),
+                            ->badge()
+                            ->color('info'),
 
                         TextEntry::make('productType.name')
-                            ->label('Type de produit')
+                            ->label('🗂️ Type de produit')
                             ->badge()
                             ->color('info'),
 
                         TextEntry::make('price')
-                            ->label('Prix')
+                            ->label('💰 Prix')
                             ->money('EUR')
-                            ->color('success'),
+                            ->color('success')
+                            ->weight('bold'),
                     ])
-                    ->columns(2),
+                    ->columns(2)
+                    ->collapsible(),
 
-                Section::make('Description')
+                Section::make('📝 Description')
+                    ->description('Contenu descriptif du produit')
                     ->schema([
                         TextEntry::make('description')
                             ->label('Description')
@@ -246,24 +252,30 @@ class ProductResource extends Resource
                     ])
                     ->collapsible(),
 
-                Section::make('Statistiques')
+                Section::make('📊 Statistiques')
+                    ->description('Données sur les variantes disponibles')
                     ->schema([
                         TextEntry::make('variants_count')
-                            ->label('Nombre de variantes')
+                            ->label('🎯 Nombre de variantes')
                             ->badge()
                             ->color('warning')
                             ->getStateUsing(function ($record) {
                                 return $record->variants()->count();
                             }),
-                    ])
-                    ->columns(1),                Section::make()
-                    ->heading(function ($record) {
-                        $variants = $record->variants()->with('color')->get();
-                        $colors = $variants->pluck('color')->unique('id');
-                        $colorCount = $colors->count();
 
-                        return "Couleurs : {$colorCount}";
-                    })
+                        TextEntry::make('colors_count')
+                            ->label('🎨 Couleurs disponibles')
+                            ->badge()
+                            ->color('info')
+                            ->getStateUsing(function ($record) {
+                                return $record->variants()->distinct('color_id')->count('color_id');
+                            }),
+                    ])
+                    ->columns(2)
+                    ->collapsible(),
+
+                Section::make('🎨 Couleurs avec images')
+                    ->description('État des images par couleur')
                     ->schema([
                         TextEntry::make('product_colors_with_images')
                             ->label('')
@@ -272,7 +284,7 @@ class ProductResource extends Resource
                                 $colors = $variants->pluck('color')->filter()->unique('id');
 
                                 if ($colors->isEmpty()) {
-                                    return 'Aucune couleur disponible';
+                                    return '❌ Aucune couleur disponible';
                                 }
 
                                 $colorList = [];
@@ -281,28 +293,32 @@ class ProductResource extends Resource
                                     $colorImage = $record->getMedia("color_{$color->id}")->first();
 
                                     if ($colorImage) {
-                                        $colorList[] = "{$color->name} - Image disponible";
+                                        $colorList[] = "✅ {$color->name} - Image disponible";
                                     } else {
-                                        $colorList[] = "{$color->name} - Pas d'image";
+                                        $colorList[] = "❌ {$color->name} - Pas d'image";
                                     }
                                 }
 
                                 return implode("\n", $colorList);
                             })
                             ->columnSpanFull(),
-                    ]),
+                    ])
+                    ->collapsible(),
 
-                Section::make('Informations système')
+                Section::make('⚙️ Informations système')
+                    ->description('Données techniques et historique')
                     ->schema([
                         TextEntry::make('created_at')
-                            ->label('Créé le')
+                            ->label('📅 Créé le')
                             ->dateTime('d/m/Y à H:i')
-                            ->placeholder('Non disponible'),
+                            ->placeholder('Non disponible')
+                            ->icon('heroicon-o-calendar'),
 
                         TextEntry::make('updated_at')
-                            ->label('Dernière modification')
+                            ->label('🔄 Dernière modification')
                             ->dateTime('d/m/Y à H:i')
                             ->placeholder('Jamais modifié')
+                            ->icon('heroicon-o-clock')
                             ->formatStateUsing(function ($record) {
                                 // Si pas de modification, afficher la date de création
                                 if ($record->updated_at->eq($record->created_at)) {
@@ -311,7 +327,8 @@ class ProductResource extends Resource
                                 return $record->updated_at->format('d/m/Y à H:i');
                             }),
                     ])
-                    ->columns(2),
+                    ->columns(2)
+                    ->collapsible(),
             ]);
     }
 

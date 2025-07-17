@@ -41,13 +41,14 @@ class AdminPanelProvider extends PanelProvider
             ->navigationGroups([
                 'Configuration',
                 'Catalogue',
+                'Commandes',
                 'Utilisateurs',
             ])
-            ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
-                \App\Filament\Widgets\StatsOverview::class,
-                \App\Filament\Widgets\QuickActions::class,
                 \App\Filament\Widgets\ProductStockChart::class,
+                \App\Filament\Widgets\QuickActions::class,
+                \App\Filament\Widgets\StatsOverview::class,
+                \App\Filament\Widgets\RecentOrdersWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,

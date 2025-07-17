@@ -108,36 +108,43 @@ class ColorResource extends Resource
     {
         return $infolist
             ->schema([
-                Section::make('Détails de la couleur')
+                Section::make('🎨 Détails de la couleur')
+                    ->description('Informations sur cette couleur')
                     ->schema([
                         TextEntry::make('name')
-                            ->label('Nom')
+                            ->label('🏷️ Nom')
                             ->size('lg')
-                            ->weight('bold'),
+                            ->weight('bold')
+                            ->icon('heroicon-o-tag'),
 
                         ColorEntry::make('hex_code')
-                            ->label('Couleur'),
+                            ->label('🌈 Aperçu couleur'),
 
                         TextEntry::make('hex_code')
-                            ->label('Code hexadécimal')
+                            ->label('🔢 Code hexadécimal')
                             ->copyable()
                             ->copyMessage('Code couleur copié!')
                             ->badge()
-                            ->color('gray'),
+                            ->color('gray')
+                            ->prefix('#'),
                     ])
-                    ->columns(3),
+                    ->columns(3)
+                    ->collapsible(),
 
-                Section::make('Informations système')
+                Section::make('⚙️ Informations système')
+                    ->description('Données techniques et historique')
                     ->schema([
                         TextEntry::make('created_at')
-                            ->label('Créé le')
+                            ->label('📅 Créé le')
                             ->dateTime('d/m/Y à H:i')
-                            ->placeholder('Non disponible'),
+                            ->placeholder('Non disponible')
+                            ->icon('heroicon-o-calendar'),
 
                         TextEntry::make('updated_at')
-                            ->label('Dernière modification')
+                            ->label('🔄 Dernière modification')
                             ->dateTime('d/m/Y à H:i')
                             ->placeholder('Jamais modifié')
+                            ->icon('heroicon-o-clock')
                             ->formatStateUsing(function ($record) {
                                 // Si pas de modification, afficher la date de création
                                 if ($record->updated_at->eq($record->created_at)) {
@@ -146,7 +153,8 @@ class ColorResource extends Resource
                                 return $record->updated_at->format('d/m/Y à H:i');
                             }),
                     ])
-                    ->columns(2),
+                    ->columns(2)
+                    ->collapsible(),
             ]);
     }
 
