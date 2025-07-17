@@ -135,10 +135,10 @@
                                     <div>
                                         <select wire:model="country"
                                                 class="w-full px-3 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('country') border-red-500 @enderror">
+                                            <option value="">Sélectionner une option</option>
                                             <option value="France">France</option>
-                                            <option value="Belgique">Belgique</option>
                                             <option value="Suisse">Suisse</option>
-                                            <option value="Luxembourg">Luxembourg</option>
+                                            <option value="Belgique">Belgique</option>
                                         </select>
                                         @error('country')
                                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>

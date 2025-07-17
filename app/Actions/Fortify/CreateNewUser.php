@@ -26,6 +26,7 @@ class CreateNewUser implements CreatesNewUsers
             'street' => ['required', 'string', 'max:255'],
             'city' => ['required', 'string', 'max:255'],
             'postal_code' => ['required', 'string', 'max:10'],
+            'department' => ['required', 'string', 'max:255'],
             'country' => ['required', 'string', 'max:255'],
             'email' => [
                 'required',
@@ -44,6 +45,7 @@ class CreateNewUser implements CreatesNewUsers
             'street' => $input['street'],
             'city' => $input['city'],
             'postal_code' => $input['postal_code'],
+            'department' => $input['department'],
             'country' => $input['country'],
             'email' => $input['email'],
             'password' => Hash::make($input['password']),

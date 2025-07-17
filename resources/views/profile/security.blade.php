@@ -64,7 +64,6 @@
 
                     @if(auth()->user()->email_verified_at)
                         <div class="flex items-center p-3 bg-green-50 rounded-lg">
-                            <div class="w-3 h-3 bg-green-400 rounded-full mr-3"></div>
                             <div>
                                 <p class="font-medium text-green-800">Email vérifié</p>
                                 <p class="text-sm text-green-600">Vérifié le {{ auth()->user()->email_verified_at->format('d/m/Y') }}</p>
@@ -73,7 +72,6 @@
                     @else
                         <div class="flex items-center justify-between p-3 bg-red-50 rounded-lg">
                             <div class="flex items-center">
-                                <div class="w-3 h-3 bg-red-400 rounded-full mr-3"></div>
                                 <div>
                                     <p class="font-medium text-red-800">Email non vérifié</p>
                                     <p class="text-sm text-red-600">Vérifiez votre email pour sécuriser votre compte</p>

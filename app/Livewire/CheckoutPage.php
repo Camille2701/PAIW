@@ -84,7 +84,7 @@ class CheckoutPage extends Component
             $this->email = $user->email ?? '';
             $this->street = $user->street ?? '';
             $this->city = $user->city ?? '';
-            $this->country = $user->country ?? 'France';
+            $this->country = $user->country ?? '';
             $this->postal_code = $user->postal_code ?? '';
         }
     }
@@ -250,13 +250,8 @@ class CheckoutPage extends Component
             // Simulation d'un délai de traitement
             sleep(2);
 
-            // IMPORTANT: Sauvegarder les items du panier AVANT de créer la commande
-            // car createOrder() pourrait les modifier
-            $cartItemsSnapshot = $this->cartItems->toArray();
-            Log::info('Items du panier sauvegardés: ' . count($cartItemsSnapshot));
-
-            // Créer la commande
-            $order = $this->createOrder($cartItemsSnapshot);
+            // Créer la commande directement sans snapshot pour déboguer
+            $order = $this->createOrder();
 
             if ($order) {
                 // Vider le panier APRÈS la création réussie de la commande
@@ -278,41 +273,23 @@ class CheckoutPage extends Component
         }
     }
 
-    private function createOrder($cartItemsSnapshot = null)
+    private function createOrder()
     {
+        Log::info('🚀 DÉBUT CRÉATION COMMANDE');
+
         try {
-            // Utiliser le snapshot ou récupérer les items actuels
-            $itemsToProcess = $cartItemsSnapshot ? collect($cartItemsSnapshot) : $this->cartItems;
+            // Étape 1: Récupérer les items du panier
+            Log::info('📦 Récupération des items du panier...');
+            $cartItems = $this->cartService->getCartItems();
+            Log::info('✅ Items trouvés dans le panier: ' . $cartItems->count());
 
-            // Debug: Log du début de la création de commande
-            Log::info('=== DÉBUT CRÉATION COMMANDE ===');
-            Log::info('Utilisateur connecté: ' . (Auth::check() ? 'Oui (ID: ' . Auth::id() . ')' : 'Non'));
-            Log::info('Nombre d\'items à traiter: ' . $itemsToProcess->count());
-            Log::info('Source des items: ' . ($cartItemsSnapshot ? 'Snapshot' : 'CartService'));
-
-            // Log des items du panier en détail
-            foreach ($itemsToProcess as $index => $cartItem) {
-                // Convertir en objet si c'est un array (du snapshot)
-                if (is_array($cartItem)) {
-                    $cartItem = (object) $cartItem;
-                }
-
-                Log::info("Item $index:", [
-                    'id' => $cartItem->id ?? 'N/A',
-                    'product_variant_id' => $cartItem->product_variant_id ?? 'N/A',
-                    'quantity' => $cartItem->quantity ?? 'N/A',
-                    'type' => gettype($cartItem),
-                    'has_productVariant' => isset($cartItem->productVariant) ? 'Oui' : 'Non',
-                ]);
-            }
-
-            // Vérifier que le panier n'est pas vide
-            if ($itemsToProcess->isEmpty()) {
-                Log::error('Tentative de créer une commande avec un panier vide');
+            if ($cartItems->isEmpty()) {
+                Log::error('❌ ERREUR: Panier vide!');
                 return null;
             }
 
-            // Créer la commande
+            // Étape 2: Créer l'Order
+            Log::info('📝 Création de l\'order...');
             $order = new \App\Models\Order();
             $order->user_id = Auth::check() ? Auth::id() : null;
             $order->total_price = $this->getTotalWithShipping();
@@ -331,70 +308,83 @@ class CheckoutPage extends Component
             $order->coupon_code = $this->coupon_applied ? $this->coupon_code : null;
             $order->save();
 
-            Log::info('Commande créée avec ID: ' . $order->id);
+            Log::info('✅ Order créé avec ID: ' . $order->id);
 
-            // Créer les items de commande
+            // Étape 3: Créer les OrderItems
+            Log::info('🛍️ Création des OrderItems...');
             $itemsCreated = 0;
-            foreach ($itemsToProcess as $cartItem) {
-                // Convertir en objet si c'est un array (du snapshot)
-                if (is_array($cartItem)) {
-                    $cartItem = (object) $cartItem;
-                    // Pour les snapshots, on doit récupérer les données du ProductVariant
-                    $productVariant = \App\Models\ProductVariant::with(['product'])->find($cartItem->product_variant_id);
-                } else {
-                    $productVariant = $cartItem->productVariant;
-                }
 
-                Log::info('Traitement item de panier:', [
-                    'product_variant_id' => $cartItem->product_variant_id ?? 'NULL',
-                    'quantity' => $cartItem->quantity ?? 'NULL',
-                    'has_productVariant' => isset($productVariant) ? 'Oui' : 'Non'
-                ]);
+            foreach ($cartItems as $index => $cartItem) {
+                Log::info("🔍 Item $index - ProductVariant ID: " . ($cartItem->product_variant_id ?? 'NULL') . " - Quantity: " . ($cartItem->quantity ?? 'NULL'));
 
-                if (!$productVariant || !$productVariant->product) {
-                    Log::error('Item de panier invalide skippé:', [
-                        'cartItem_id' => $cartItem->id ?? 'N/A',
-                        'product_variant_id' => $cartItem->product_variant_id ?? 'N/A',
-                        'has_productVariant' => isset($productVariant) ? 'Oui' : 'Non',
-                        'has_product' => (isset($productVariant) && isset($productVariant->product)) ? 'Oui' : 'Non'
-                    ]);
+                // Validation de base
+                if (!isset($cartItem->product_variant_id) || !isset($cartItem->quantity)) {
+                    Log::error("❌ Item $index INVALIDE - données manquantes");
                     continue;
                 }
 
+                // Récupérer le ProductVariant
+                $productVariant = \App\Models\ProductVariant::with('product')->find($cartItem->product_variant_id);
+
+                if (!$productVariant) {
+                    Log::error("❌ ProductVariant introuvable pour ID: " . $cartItem->product_variant_id);
+                    continue;
+                }
+
+                if (!$productVariant->product) {
+                    Log::error("❌ Product introuvable pour ProductVariant ID: " . $cartItem->product_variant_id);
+                    continue;
+                }
+
+                Log::info("✅ ProductVariant OK - Product: " . $productVariant->product->name . " - Prix: " . $productVariant->product->price);
+
+                // Créer l'OrderItem
                 try {
                     $orderItem = new \App\Models\OrderItem();
                     $orderItem->order_id = $order->id;
                     $orderItem->product_variant_id = $cartItem->product_variant_id;
                     $orderItem->quantity = $cartItem->quantity;
                     $orderItem->unit_price = $productVariant->product->price;
-                    $orderItem->save();
 
+                    // VÉRIFICATION AVANT SAUVEGARDE
+                    if (!$orderItem->order_id || !$orderItem->product_variant_id || !$orderItem->quantity || !$orderItem->unit_price) {
+                        Log::error("❌ OrderItem invalide avant sauvegarde:", [
+                            'order_id' => $orderItem->order_id,
+                            'product_variant_id' => $orderItem->product_variant_id,
+                            'quantity' => $orderItem->quantity,
+                            'unit_price' => $orderItem->unit_price
+                        ]);
+                        continue;
+                    }
+
+                    $orderItem->save();
                     $itemsCreated++;
-                    Log::info('OrderItem créé avec succès:', [
-                        'orderItem_id' => $orderItem->id,
-                        'order_id' => $order->id,
-                        'product_variant_id' => $orderItem->product_variant_id,
-                        'quantity' => $orderItem->quantity,
-                        'unit_price' => $orderItem->unit_price
-                    ]);
-                } catch (\Exception $itemError) {
-                    Log::error('Erreur lors de la création d\'un OrderItem:', [
-                        'error' => $itemError->getMessage(),
-                        'product_variant_id' => $cartItem->product_variant_id,
-                        'quantity' => $cartItem->quantity
-                    ]);
+
+                    Log::info("✅ OrderItem #{$orderItem->id} créé pour Order #{$order->id}");
+
+                } catch (\Exception $e) {
+                    Log::error("❌ ERREUR création OrderItem: " . $e->getMessage());
+                    Log::error("Stack: " . $e->getTraceAsString());
                 }
             }
 
-            // Recharger la commande avec ses items pour vérification
-            $order->load('orderItems');
-            Log::info('Commande ' . $order->id . ' créée avec ' . $order->orderItems->count() . ' items (items créés: ' . $itemsCreated . ')');
-            Log::info('=== FIN CRÉATION COMMANDE ===');
+            // Étape 4: Vérification finale
+            Log::info("🔍 Vérification finale...");
+            $finalCount = \App\Models\OrderItem::where('order_id', $order->id)->count();
+            Log::info("📊 Items créés: $itemsCreated - Items en DB: $finalCount");
 
+            if ($finalCount === 0) {
+                Log::error("🚨 ÉCHEC CRITIQUE: Aucun OrderItem créé!");
+            } else {
+                Log::info("🎉 SUCCÈS: $finalCount OrderItems créés!");
+            }
+
+            Log::info('🏁 FIN CRÉATION COMMANDE');
             return $order;
+
         } catch (\Exception $e) {
-            Log::error('Erreur création commande: ' . $e->getMessage());
-            Log::error('Stack trace: ' . $e->getTraceAsString());
+            Log::error("💥 ERREUR GLOBALE: " . $e->getMessage());
+            Log::error("Stack: " . $e->getTraceAsString());
             return null;
         }
     }
