@@ -7,6 +7,7 @@ use App\Livewire\ShopPage;
 use App\Livewire\ProductPage;
 use App\Livewire\CartPage;
 use App\Livewire\CheckoutPage;
+use App\Livewire\OrderConfirmation;
 
 Route::get('/', HomePage::class)->name('home');
 Route::get('/shop', function() {
@@ -27,6 +28,9 @@ Route::get('/panier', function() {
 
 // Route pour le checkout
 Route::get('/checkout', CheckoutPage::class)->name('checkout');
+
+// Route pour la confirmation de commande
+Route::get('/order/confirmation/{orderId}', OrderConfirmation::class)->name('order.confirmation');
 
 // Route pour le profil utilisateur (temporaire)
 Route::get('/profile', function() {
