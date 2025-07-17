@@ -368,7 +368,22 @@ class CheckoutPage extends Component
                 }
             }
 
-            // Étape 4: Vérification finale
+            // Étape 4: Diminution du stock (car commande payée)
+            Log::info("📦 Diminution du stock...");
+            foreach ($cartItems as $cartItem) {
+                if ($cartItem->productVariant) {
+                    $productVariant = $cartItem->productVariant;
+                    $oldStock = $productVariant->stock;
+                    $newStock = max(0, $oldStock - $cartItem->quantity); // Éviter stock négatif
+
+                    $productVariant->stock = $newStock;
+                    $productVariant->save();
+
+                    Log::info("📉 Stock variant #{$productVariant->id}: {$oldStock} → {$newStock} (-{$cartItem->quantity})");
+                }
+            }
+
+            // Étape 5: Vérification finale
             Log::info("🔍 Vérification finale...");
             $finalCount = \App\Models\OrderItem::where('order_id', $order->id)->count();
             Log::info("📊 Items créés: $itemsCreated - Items en DB: $finalCount");
