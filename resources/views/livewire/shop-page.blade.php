@@ -7,12 +7,12 @@
 
                 <!-- Sélecteur de genre -->
                 <div class="flex gap-2 sm:gap-4 w-full sm:w-auto">
-                    <button wire:click="switchGender('men')"
-                            class="flex-1 sm:flex-none px-3 py-2 sm:px-4 sm:py-2 border border-white text-sm {{ $gender === 'men' ? 'bg-white text-black' : 'bg-transparent text-white' }} rounded transition-colors">
+                    <button wire:click.stop="switchGender('men')"
+                            class="flex-1 sm:flex-none px-3 py-2 sm:px-4 sm:py-2 border border-white text-sm {{ $gender === 'men' ? 'bg-white text-black' : 'bg-transparent text-white' }} rounded transition-colors cursor-pointer">
                         Homme
                     </button>
-                    <button wire:click="switchGender('women')"
-                            class="flex-1 sm:flex-none px-3 py-2 sm:px-4 sm:py-2 border border-white text-sm {{ $gender === 'women' ? 'bg-white text-black' : 'bg-transparent text-white' }} rounded transition-colors">
+                    <button wire:click.stop="switchGender('women')"
+                            class="flex-1 sm:flex-none px-3 py-2 sm:px-4 sm:py-2 border border-white text-sm {{ $gender === 'women' ? 'bg-white text-black' : 'bg-transparent text-white' }} rounded transition-colors cursor-pointer">
                         Femme
                     </button>
                 </div>

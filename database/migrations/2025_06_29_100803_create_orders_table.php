@@ -33,6 +33,7 @@ return new class extends Migration {
             // Informations de livraison et coupon
             $table->string('shipping_method'); // ups_standard, ups_premium
             $table->string('coupon_code')->nullable();
+            $table->decimal('coupon_discount', 5, 4)->default(0); // Pourcentage de réduction (ex: 0.1000 pour 10%)
 
             $table->timestamps();
             $table->softDeletes();

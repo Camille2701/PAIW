@@ -35,6 +35,7 @@ class Order extends Model
         'total_price' => 'decimal:2',
         'shipping_price' => 'decimal:2',
         'discount_amount' => 'decimal:2',
+        'coupon_discount' => 'decimal:4',
     ];
 
     public function user(): BelongsTo
