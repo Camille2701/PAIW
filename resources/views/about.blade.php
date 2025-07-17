@@ -3,22 +3,22 @@
 @section('content')
 <div class="min-h-screen bg-gray-50">
     <!-- Hero Section -->
-    <div class="bg-gradient-to-r from-blue-50 to-indigo-100 py-16">
+    <div class="bg-gradient-to-r from-blue-50 to-indigo-100 py-12 sm:py-16">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">À propos de nous</h1>
-            <p class="text-xl text-gray-600 max-w-3xl mx-auto">Camille, Alexis et Clément ont créé ce site dans le cadre d'un projet d'école.</p>
+            <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-4">À propos de nous</h1>
+            <p class="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto px-4">Camille, Alexis et Clément ont créé ce site dans le cadre d'un projet d'école.</p>
         </div>
     </div>
 
     <!-- Section Équipe -->
-    <div class="py-16 bg-white">
+    <div class="py-12 sm:py-16 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Notre Équipe</h2>
-                <p class="text-xl text-gray-600 max-w-2xl mx-auto">Découvrez les personnes passionnées qui ont donné vie à ce projet.</p>
+            <div class="text-center mb-12 sm:mb-16">
+                <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-4">Notre Équipe</h2>
+                <p class="text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto px-4">Découvrez les personnes passionnées qui ont donné vie à ce projet.</p>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
                 <!-- Alexis -->
                 <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
                     <div class="aspect-square overflow-hidden bg-gray-100">
@@ -39,10 +39,10 @@
                             </div>
                         @endif
                     </div>
-                    <div class="p-6">
-                        <h3 class="text-xl font-bold text-gray-900 mb-2">Alexis</h3>
-                        <p class="text-blue-600 font-medium mb-3">Développeur Full-Stack</p>
-                        <p class="text-gray-600 text-sm leading-relaxed">
+                    <div class="p-4 sm:p-6">
+                        <h3 class="text-lg sm:text-xl font-bold text-gray-900 mb-2">Alexis</h3>
+                        <p class="text-blue-600 font-medium mb-3 text-sm sm:text-base">Développeur Full-Stack</p>
+                        <p class="text-gray-600 text-xs sm:text-sm leading-relaxed">
                             Passionné par le développement web et les nouvelles technologies, Alexis apporte son expertise technique au projet.
                         </p>
                     </div>
@@ -68,10 +68,10 @@
                             </div>
                         @endif
                     </div>
-                    <div class="p-6">
-                        <h3 class="text-xl font-bold text-gray-900 mb-2">Camille</h3>
-                        <p class="text-blue-600 font-medium mb-3">Designer & Développeur</p>
-                        <p class="text-gray-600 text-sm leading-relaxed">
+                    <div class="p-4 sm:p-6">
+                        <h3 class="text-lg sm:text-xl font-bold text-gray-900 mb-2">Camille</h3>
+                        <p class="text-blue-600 font-medium mb-3 text-sm sm:text-base">Designer & Développeur</p>
+                        <p class="text-gray-600 text-xs sm:text-sm leading-relaxed">
                             Spécialisé dans l'expérience utilisateur et le design d'interface, Camille donne vie aux idées créatives.
                         </p>
                     </div>
@@ -97,10 +97,10 @@
                             </div>
                         @endif
                     </div>
-                    <div class="p-6">
-                        <h3 class="text-xl font-bold text-gray-900 mb-2">Clément</h3>
-                        <p class="text-blue-600 font-medium mb-3">Développeur Backend</p>
-                        <p class="text-gray-600 text-sm leading-relaxed">
+                    <div class="p-4 sm:p-6">
+                        <h3 class="text-lg sm:text-xl font-bold text-gray-900 mb-2">Clément</h3>
+                        <p class="text-blue-600 font-medium mb-3 text-sm sm:text-base">Développeur Backend</p>
+                        <p class="text-gray-600 text-xs sm:text-sm leading-relaxed">
                             Expert en architecture backend et gestion de données, Clément assure la robustesse technique du projet.
                         </p>
                     </div>

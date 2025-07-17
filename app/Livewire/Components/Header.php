@@ -9,6 +9,7 @@ class Header extends Component
     public $searchQuery = '';
     public $showSearchModal = false;
     public $showUserMenu = false;
+    public $showMobileMenu = false;
 
     public function search()
     {
@@ -47,6 +48,16 @@ class Header extends Component
     public function closeUserMenu()
     {
         $this->showUserMenu = false;
+    }
+
+    public function toggleMobileMenu()
+    {
+        $this->showMobileMenu = !$this->showMobileMenu;
+    }
+
+    public function closeMobileMenu()
+    {
+        $this->showMobileMenu = false;
     }
 
     public function render()
