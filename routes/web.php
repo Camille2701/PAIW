@@ -32,7 +32,17 @@ Route::get('/checkout', CheckoutPage::class)->name('checkout');
 // Route pour la confirmation de commande
 Route::get('/order/confirmation/{orderId}', OrderConfirmation::class)->name('order.confirmation');
 
-// Route pour le profil utilisateur (temporaire)
-Route::get('/profile', function() {
-    return view('profile', ['user' => Auth::user()]);
-})->middleware('auth')->name('profile');
+// Routes pour le profil utilisateur
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', function() {
+        return view('profile.profile', ['user' => Auth::user()]);
+    })->name('profile');
+
+    Route::get('/profile/security', function() {
+        return view('profile.security', ['user' => Auth::user()]);
+    })->name('profile.security');
+
+    Route::get('/profile/orders', function() {
+        return view('profile.orders', ['user' => Auth::user()]);
+    })->name('profile.orders');
+});
