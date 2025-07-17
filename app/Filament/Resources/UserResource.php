@@ -171,7 +171,8 @@ class UserResource extends Resource
     {
         return $infolist
             ->schema([
-                Infolists\Components\Section::make('Avatar')
+                Infolists\Components\Section::make('👤 Avatar')
+                    ->description('Photo de profil de l\'utilisateur')
                     ->schema([
                         Infolists\Components\ImageEntry::make('avatar')
                             ->getStateUsing(function (User $record): ?string {
@@ -183,49 +184,70 @@ class UserResource extends Resource
                             ->circular()
                             ->size(150),
                     ])
-                    ->columns(1),
+                    ->columns(1)
+                    ->collapsible(),
 
-                Infolists\Components\Section::make('Informations personnelles')
+                Infolists\Components\Section::make('📝 Informations personnelles')
+                    ->description('Données de base de l\'utilisateur')
                     ->schema([
                         Infolists\Components\TextEntry::make('name')
-                            ->label('Nom d\'utilisateur'),
+                            ->label('👤 Nom d\'utilisateur')
+                            ->weight('bold')
+                            ->size('lg')
+                            ->icon('heroicon-o-user'),
                         Infolists\Components\TextEntry::make('first_name')
-                            ->label('Prénom'),
+                            ->label('🙋‍♂️ Prénom')
+                            ->placeholder('Non renseigné'),
                         Infolists\Components\TextEntry::make('last_name')
-                            ->label('Nom'),
+                            ->label('👨‍💼 Nom')
+                            ->placeholder('Non renseigné'),
                         Infolists\Components\TextEntry::make('email')
-                            ->label('Email')
-                            ->icon('heroicon-m-envelope'),
+                            ->label('📧 Email')
+                            ->icon('heroicon-m-envelope')
+                            ->copyable()
+                            ->copyMessage('Email copié!'),
                         Infolists\Components\TextEntry::make('email_verified_at')
-                            ->label('Email vérifié le')
-                            ->dateTime()
-                            ->placeholder('Non vérifié'),
+                            ->label('✅ Email vérifié le')
+                            ->dateTime('d/m/Y à H:i')
+                            ->placeholder('❌ Non vérifié')
+                            ->color(fn ($state) => $state ? 'success' : 'danger'),
                     ])
-                    ->columns(2),
+                    ->columns(2)
+                    ->collapsible(),
 
-                Infolists\Components\Section::make('Adresse')
+                Infolists\Components\Section::make('📍 Adresse')
+                    ->description('Informations de localisation')
                     ->schema([
                         Infolists\Components\TextEntry::make('street')
-                            ->label('Rue'),
+                            ->label('🏠 Rue')
+                            ->placeholder('Non renseignée'),
                         Infolists\Components\TextEntry::make('postal_code')
-                            ->label('Code postal'),
+                            ->label('📮 Code postal')
+                            ->placeholder('Non renseigné'),
                         Infolists\Components\TextEntry::make('department')
-                            ->label('Département'),
+                            ->label('🗺️ Département')
+                            ->placeholder('Non renseigné'),
                         Infolists\Components\TextEntry::make('country')
-                            ->label('Pays'),
+                            ->label('🌍 Pays')
+                            ->placeholder('Non renseigné'),
                     ])
-                    ->columns(2),
+                    ->columns(2)
+                    ->collapsible(),
 
-                Infolists\Components\Section::make('Dates')
+                Infolists\Components\Section::make('⚙️ Informations système')
+                    ->description('Données techniques et historique')
                     ->schema([
                         Infolists\Components\TextEntry::make('created_at')
-                            ->label('Créé le')
-                            ->dateTime(),
+                            ->label('📅 Créé le')
+                            ->dateTime('d/m/Y à H:i')
+                            ->icon('heroicon-o-calendar'),
                         Infolists\Components\TextEntry::make('updated_at')
-                            ->label('Modifié le')
-                            ->dateTime(),
+                            ->label('🔄 Modifié le')
+                            ->dateTime('d/m/Y à H:i')
+                            ->icon('heroicon-o-clock'),
                     ])
-                    ->columns(2),
+                    ->columns(2)
+                    ->collapsible(),
             ]);
     }
 

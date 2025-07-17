@@ -20,6 +20,7 @@ class ProductSeeder extends Seeder
         // Récupérer les types de produits, couleurs et tailles
         $menTypes = ProductType::where('gender', 'men')->get();
         $womenTypes = ProductType::where('gender', 'women')->get();
+        $unisexTypes = ProductType::where('gender', 'unisex')->get();
         $colors = Color::all();
         $sizes = Size::all();
 
@@ -65,6 +66,26 @@ class ProductSeeder extends Seeder
             ['name' => 'Veste Jean', 'type' => 'Veste', 'price' => 89.99],
         ];
 
+        // Produits unisexes
+        $unisexProducts = [
+            ['name' => 'Hoodie Essential', 'type' => 'Hoodie', 'price' => 59.99],
+            ['name' => 'Hoodie Oversize', 'type' => 'Hoodie', 'price' => 64.99],
+            ['name' => 'Sweat-shirt Classic', 'type' => 'Sweat-shirt', 'price' => 49.99],
+            ['name' => 'Sweat-shirt Vintage', 'type' => 'Sweat-shirt', 'price' => 54.99],
+            ['name' => 'T-shirt Oversize Basic', 'type' => 'T-shirt oversize', 'price' => 29.99],
+            ['name' => 'T-shirt Oversize Premium', 'type' => 'T-shirt oversize', 'price' => 32.99],
+            ['name' => 'Jogger Comfort', 'type' => 'Jogger', 'price' => 39.99],
+            ['name' => 'Jogger Sport', 'type' => 'Jogger', 'price' => 44.99],
+            ['name' => 'Short Basic', 'type' => 'Short', 'price' => 24.99],
+            ['name' => 'Short Cargo', 'type' => 'Short', 'price' => 34.99],
+            ['name' => 'Casquette Baseball', 'type' => 'Casquette', 'price' => 19.99],
+            ['name' => 'Casquette Snapback', 'type' => 'Casquette', 'price' => 24.99],
+            ['name' => 'Bonnet Laine', 'type' => 'Bonnet', 'price' => 14.99],
+            ['name' => 'Bonnet Beanie', 'type' => 'Bonnet', 'price' => 16.99],
+            ['name' => 'Chaussettes Pack 3', 'type' => 'Chaussettes', 'price' => 12.99],
+            ['name' => 'Chaussettes Sport', 'type' => 'Chaussettes', 'price' => 9.99],
+        ];
+
         // Créer les produits pour hommes
         foreach ($menProducts as $productData) {
             $type = $menTypes->where('name', $productData['type'])->first();
@@ -88,6 +109,22 @@ class ProductSeeder extends Seeder
                 $product = Product::create([
                     'name' => $productData['name'],
                     'description' => 'Description de ' . $productData['name'],
+                    'price' => $productData['price'],
+                    'product_type_id' => $type->id,
+                ]);
+
+                // Créer des variantes avec différentes couleurs et tailles
+                $this->createVariants($product, $colors, $sizes);
+            }
+        }
+
+        // Créer les produits unisexes
+        foreach ($unisexProducts as $productData) {
+            $type = $unisexTypes->where('name', $productData['type'])->first();
+            if ($type) {
+                $product = Product::create([
+                    'name' => $productData['name'],
+                    'description' => 'Description de ' . $productData['name'] . ' - Article unisexe convenant aux hommes et aux femmes.',
                     'price' => $productData['price'],
                     'product_type_id' => $type->id,
                 ]);

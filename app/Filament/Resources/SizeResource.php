@@ -91,27 +91,33 @@ class SizeResource extends Resource
     {
         return $infolist
             ->schema([
-                Section::make('Détails de la taille')
+                Section::make('📏 Détails de la taille')
+                    ->description('Informations sur cette taille')
                     ->schema([
                         TextEntry::make('label')
-                            ->label('Étiquette de taille')
+                            ->label('🏷️ Étiquette de taille')
                             ->size('lg')
                             ->weight('bold')
                             ->badge()
-                            ->color('info'),
-                    ]),
+                            ->color('info')
+                            ->icon('heroicon-o-tag'),
+                    ])
+                    ->collapsible(),
 
-                Section::make('Informations système')
+                Section::make('⚙️ Informations système')
+                    ->description('Données techniques et historique')
                     ->schema([
                         TextEntry::make('created_at')
-                            ->label('Créé le')
+                            ->label('📅 Créé le')
                             ->dateTime('d/m/Y à H:i')
-                            ->placeholder('Non disponible'),
+                            ->placeholder('Non disponible')
+                            ->icon('heroicon-o-calendar'),
 
                         TextEntry::make('updated_at')
-                            ->label('Dernière modification')
+                            ->label('🔄 Dernière modification')
                             ->dateTime('d/m/Y à H:i')
                             ->placeholder('Jamais modifié')
+                            ->icon('heroicon-o-clock')
                             ->formatStateUsing(function ($record) {
                                 // Si pas de modification, afficher la date de création
                                 if ($record->updated_at->eq($record->created_at)) {
@@ -120,7 +126,8 @@ class SizeResource extends Resource
                                 return $record->updated_at->format('d/m/Y à H:i');
                             }),
                     ])
-                    ->columns(2),
+                    ->columns(2)
+                    ->collapsible(),
             ]);
     }
 

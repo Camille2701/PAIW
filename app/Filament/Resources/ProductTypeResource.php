@@ -48,6 +48,7 @@ class ProductTypeResource extends Resource
                             ->options([
                                 'men' => 'Hommes',
                                 'women' => 'Femmes',
+                                'unisex' => 'Unisexe',
                             ])
                             ->required()
                             ->native(false),
@@ -71,12 +72,14 @@ class ProductTypeResource extends Resource
                     ->formatStateUsing(fn (string $state): string => match ($state) {
                         'men' => 'Hommes',
                         'women' => 'Femmes',
+                        'unisex' => 'Unisexe',
                         default => $state,
                     })
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
                         'men' => 'info',
                         'women' => 'success',
+                        'unisex' => 'primary',
                         default => 'gray',
                     })
                     ->searchable(),
@@ -105,6 +108,7 @@ class ProductTypeResource extends Resource
                     ->options([
                         'men' => 'Hommes',
                         'women' => 'Femmes',
+                        'unisex' => 'Unisexe',
                     ]),
             ])
             ->actions([
@@ -124,46 +128,68 @@ class ProductTypeResource extends Resource
     {
         return $infolist
             ->schema([
-                Section::make('Détails du type de produit')
+                Section::make('🏷️ Détails du type de produit')
+                    ->description('Informations sur cette catégorie de produit')
                     ->schema([
                         TextEntry::make('name')
-                            ->label('Nom')
+                            ->label('📛 Nom du type')
                             ->size('lg')
-                            ->weight('bold'),
+                            ->weight('bold')
+                            ->icon('heroicon-o-tag'),
 
                         TextEntry::make('gender')
-                            ->label('Genre cible')
+                            ->label('👤 Genre cible')
                             ->formatStateUsing(fn (string $state): string => match ($state) {
-                                'men' => 'Hommes',
-                                'women' => 'Femmes',
+                                'men' => '👨 Hommes',
+                                'women' => '👩 Femmes',
+                                'unisex' => '🧑‍🤝‍🧑 Unisexe',
                                 default => $state,
                             })
                             ->badge()
                             ->color(fn (string $state): string => match ($state) {
                                 'men' => 'info',
                                 'women' => 'success',
+                                'unisex' => 'primary',
                                 default => 'gray',
+                            })
+                            ->icon(fn (string $state): string => match ($state) {
+                                'men' => 'heroicon-o-user',
+                                'women' => 'heroicon-o-user',
+                                'unisex' => 'heroicon-o-users',
+                                default => 'heroicon-o-question-mark-circle',
                             }),
                     ])
-                    ->columns(2),
+                    ->columns(2)
+                    ->collapsible(),
 
-                Section::make('Statistiques')
+                Section::make('📊 Statistiques')
+                    ->description('Données d\'utilisation et métriques')
                     ->schema([
                         TextEntry::make('products_count')
-                            ->label('Nombre de produits')
+                            ->label('🛍️ Nombre de produits')
                             ->getStateUsing(fn ($record) => $record->products()->count())
                             ->badge()
-                            ->color('warning'),
+                            ->color('warning')
+                            ->icon('heroicon-o-shopping-bag')
+                            ->formatStateUsing(fn ($state) => $state . ' produit' . ($state > 1 ? 's' : '')),
+                    ])
+                    ->columns(1)
+                    ->collapsible(),
 
+                Section::make('⚙️ Informations système')
+                    ->description('Données techniques et historique')
+                    ->schema([
                         TextEntry::make('created_at')
-                            ->label('Créé le')
+                            ->label('📅 Créé le')
                             ->dateTime('d/m/Y à H:i')
-                            ->placeholder('Non disponible'),
+                            ->placeholder('Non disponible')
+                            ->icon('heroicon-o-calendar'),
 
                         TextEntry::make('updated_at')
-                            ->label('Dernière modification')
+                            ->label('🔄 Dernière modification')
                             ->dateTime('d/m/Y à H:i')
                             ->placeholder('Jamais modifié')
+                            ->icon('heroicon-o-clock')
                             ->formatStateUsing(function ($record) {
                                 // Si pas de modification, afficher la date de création
                                 if ($record->updated_at->eq($record->created_at)) {
@@ -172,7 +198,8 @@ class ProductTypeResource extends Resource
                                 return $record->updated_at->format('d/m/Y à H:i');
                             }),
                     ])
-                    ->columns(3),
+                    ->columns(2)
+                    ->collapsible(),
             ]);
     }
 

@@ -115,6 +115,7 @@ class ProductVariantResource extends Resource
                         return match($state) {
                             'men' => 'Homme',
                             'women' => 'Femme',
+                            'unisex' => 'Unisexe',
                             default => 'Non défini'
                         };
                     })
@@ -122,6 +123,7 @@ class ProductVariantResource extends Resource
                     ->color(fn ($state): string => match ($state) {
                         'men' => 'info',
                         'women' => 'success',
+                        'unisex' => 'primary',
                         default => 'gray',
                     })
                     ->toggleable(),
@@ -160,6 +162,7 @@ class ProductVariantResource extends Resource
                     ->options([
                         'men' => 'Homme',
                         'women' => 'Femme',
+                        'unisex' => 'Unisexe',
                     ])
                     ->query(function (Builder $query, array $data): Builder {
                         return $query->when(
@@ -201,25 +204,27 @@ class ProductVariantResource extends Resource
     {
         return $infolist
             ->schema([
-                Section::make('Informations de la variante')
+                Section::make('🎯 Informations de la variante')
+                    ->description('Détails de cette variante spécifique')
                     ->schema([
                         TextEntry::make('product.name')
-                            ->label('Produit')
+                            ->label('👕 Produit')
                             ->size('lg')
-                            ->weight('bold'),
+                            ->weight('bold')
+                            ->icon('heroicon-o-tag'),
 
                         TextEntry::make('size.label')
-                            ->label('Taille')
+                            ->label('📏 Taille')
                             ->badge()
                             ->color('info'),
 
                         TextEntry::make('color.name')
-                            ->label('Couleur')
+                            ->label('🎨 Couleur')
                             ->badge()
                             ->color('success'),
 
                         TextEntry::make('stock')
-                            ->label('Stock disponible')
+                            ->label('📦 Stock disponible')
                             ->badge()
                             ->color(fn ($state): string => match (true) {
                                 $state == 0 => 'danger',
@@ -228,46 +233,56 @@ class ProductVariantResource extends Resource
                             })
                             ->formatStateUsing(fn ($state) => $state . ' unité' . ($state > 1 ? 's' : '')),
                     ])
-                    ->columns(3),
+                    ->columns(3)
+                    ->collapsible(),
 
-                Section::make('Détails du produit')
+                Section::make('🏷️ Détails du produit')
+                    ->description('Informations sur le produit parent')
                     ->schema([
                         TextEntry::make('product.productType.name')
-                            ->label('Type de produit')
-                            ->badge(),
+                            ->label('🗂️ Type de produit')
+                            ->badge()
+                            ->icon('heroicon-o-rectangle-stack'),
 
                         TextEntry::make('product.productType.gender')
-                            ->label('Genre')
+                            ->label('👤 Genre')
                             ->formatStateUsing(fn ($state) => match($state) {
-                                'men' => 'Homme',
-                                'women' => 'Femme',
-                                default => 'Non défini'
+                                'men' => '🧔 Homme',
+                                'women' => '👩 Femme',
+                                'unisex' => '👫 Unisexe',
+                                default => '❓ Non défini'
                             })
                             ->badge()
                             ->color(fn ($state): string => match ($state) {
                                 'men' => 'info',
                                 'women' => 'success',
+                                'unisex' => 'primary',
                                 default => 'gray',
                             }),
 
                         TextEntry::make('product.price')
-                            ->label('Prix du produit')
+                            ->label('💰 Prix du produit')
                             ->money('EUR')
-                            ->color('success'),
+                            ->color('success')
+                            ->weight('bold'),
                     ])
-                    ->columns(3),
+                    ->columns(3)
+                    ->collapsible(),
 
-                Section::make('Informations système')
+                Section::make('⚙️ Informations système')
+                    ->description('Données techniques et historique')
                     ->schema([
                         TextEntry::make('created_at')
-                            ->label('Créé le')
+                            ->label('📅 Créé le')
                             ->dateTime('d/m/Y à H:i')
-                            ->placeholder('Non disponible'),
+                            ->placeholder('Non disponible')
+                            ->icon('heroicon-o-calendar'),
 
                         TextEntry::make('updated_at')
-                            ->label('Dernière modification')
+                            ->label('🔄 Dernière modification')
                             ->dateTime('d/m/Y à H:i')
                             ->placeholder('Jamais modifié')
+                            ->icon('heroicon-o-clock')
                             ->formatStateUsing(function ($record) {
                                 // Si pas de modification, afficher la date de création
                                 if ($record->updated_at->eq($record->created_at)) {
@@ -276,7 +291,8 @@ class ProductVariantResource extends Resource
                                 return $record->updated_at->format('d/m/Y à H:i');
                             }),
                     ])
-                    ->columns(2),
+                    ->columns(2)
+                    ->collapsible(),
             ]);
     }
 

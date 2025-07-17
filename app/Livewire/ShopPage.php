@@ -139,9 +139,9 @@ class ShopPage extends Component
     {
         $query = Product::with(['productType', 'variants.size', 'variants.color']);
 
-        // Filtrer par genre
+        // Filtrer par genre (inclure les produits unisexes)
         $query->whereHas('productType', function($q) {
-            $q->where('gender', $this->gender);
+            $q->where('gender', $this->gender)->orWhere('gender', 'unisex');
         });
 
         // Filtrer par catégories
@@ -193,8 +193,8 @@ class ShopPage extends Component
         $products = $allProducts->take($this->perPage);
         $hasMoreProducts = $allProducts->count() > $this->perPage;
 
-        // Récupérer les types de produits pour le genre sélectionné
-        $productTypes = ProductType::where('gender', $this->gender)->get();
+        // Récupérer les types de produits pour le genre sélectionné (inclure les unisexes)
+        $productTypes = ProductType::where('gender', $this->gender)->orWhere('gender', 'unisex')->get();
         $colors = Color::all();
 
         return view('livewire.shop-page', [

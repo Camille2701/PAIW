@@ -52,7 +52,10 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
                 @foreach($newArrivals as $product)
                     @if(isset($product->id))
-                        <a href="{{ route('product.' . $product->productType->gender, $product->slug) }}" class="group cursor-pointer block">
+                        @php
+                            $gender = $product->productType->gender === 'unisex' ? 'men' : $product->productType->gender;
+                        @endphp
+                        <a href="{{ route('product.' . $gender, $product->slug) }}" class="group cursor-pointer block">
                     @else
                         <div class="group cursor-pointer">
                     @endif
@@ -67,7 +70,14 @@
                                 </div>
                             @endif
                         </div>
-                        <h3 class="text-lg font-medium text-gray-900">{{ $product->name }}</h3>
+                        <h3 class="text-lg font-medium text-gray-900">
+                            {{ $product->name }}
+                            @if(isset($product->id) && $product->productType->gender === 'unisex')
+                                <span class="text-xs text-green-600 bg-green-100 px-2 py-1 rounded ml-2">
+                                    Unisexe
+                                </span>
+                            @endif
+                        </h3>
                         <p class="text-gray-600">{{ number_format($product->price, 2) }}€</p>
                     @if(isset($product->id))
                         </a>
@@ -124,7 +134,10 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 @foreach($featuredProducts as $product)
                     @if(isset($product->id))
-                        <a href="{{ route('product.' . $product->productType->gender, $product->slug) }}" class="group cursor-pointer block">
+                        @php
+                            $gender = $product->productType->gender === 'unisex' ? 'men' : $product->productType->gender;
+                        @endphp
+                        <a href="{{ route('product.' . $gender, $product->slug) }}" class="group cursor-pointer block">
                     @else
                         <div class="group cursor-pointer">
                     @endif
@@ -139,7 +152,14 @@
                                 </div>
                             @endif
                         </div>
-                        <h3 class="text-lg font-medium text-gray-900">{{ $product->name }}</h3>
+                        <h3 class="text-lg font-medium text-gray-900">
+                            {{ $product->name }}
+                            @if(isset($product->id) && $product->productType->gender === 'unisex')
+                                <span class="text-xs text-green-600 bg-green-100 px-2 py-1 rounded ml-2">
+                                    Unisexe
+                                </span>
+                            @endif
+                        </h3>
                         <p class="text-gray-600">{{ number_format($product->price, 2) }}€</p>
                     @if(isset($product->id))
                         </a>
