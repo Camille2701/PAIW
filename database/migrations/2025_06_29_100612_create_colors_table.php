@@ -15,6 +15,7 @@ return new class extends Migration {
             $table->string('name');
             $table->string('hex_code')->unique();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

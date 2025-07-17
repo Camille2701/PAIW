@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\ProductVariantResource\Pages;
 use App\Filament\Resources\ProductVariantResource\RelationManagers;
+use App\Filament\Traits\HasSoftDeleteToggle;
 use App\Models\ProductVariant;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -18,6 +19,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ProductVariantResource extends Resource
 {
+    use HasSoftDeleteToggle;
     protected static ?string $model = ProductVariant::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-squares-2x2';
@@ -27,6 +29,14 @@ class ProductVariantResource extends Resource
     protected static ?string $modelLabel = 'Variante de Produit';
 
     protected static ?string $pluralModelLabel = 'Variantes de Produits';
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->withoutGlobalScopes([
+                SoftDeletingScope::class,
+            ]);
+    }
 
     public static function form(Form $form): Form
     {
@@ -181,6 +191,8 @@ class ProductVariantResource extends Resource
                 Tables\Filters\Filter::make('low_stock')
                     ->label('Stock faible (< 5)')
                     ->query(fn (Builder $query): Builder => $query->where('stock', '<', 5)->where('stock', '>', 0)),
+
+                static::getTrashedToggleFilter(),
             ])
             ->defaultSort('created_at', 'desc')
             ->groups([
@@ -192,10 +204,14 @@ class ProductVariantResource extends Resource
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
+                Tables\Actions\ForceDeleteAction::make(),
+                Tables\Actions\RestoreAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\ForceDeleteBulkAction::make(),
+                    Tables\Actions\RestoreBulkAction::make(),
                 ]),
             ]);
     }

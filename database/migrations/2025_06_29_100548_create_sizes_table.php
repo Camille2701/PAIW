@@ -14,6 +14,7 @@ return new class extends Migration {
             $table->id();
             $table->string('label'); // XS, S, M, L, XL, XXL
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
