@@ -27,5 +27,11 @@ class AppServiceProvider extends ServiceProvider
         \Illuminate\Support\Facades\Blade::directive('gender', function ($expression) {
             return "<?php echo __('gender.' . $expression); ?>";
         });
+
+        // Écouter l'événement de connexion pour fusionner les paniers
+        \Illuminate\Support\Facades\Event::listen(
+            \Illuminate\Auth\Events\Login::class,
+            \App\Listeners\MergeSessionCart::class
+        );
     }
 }
