@@ -24,7 +24,7 @@ class RecentOrdersWidget extends BaseWidget
             )
             ->columns([
                 Tables\Columns\TextColumn::make('id')
-                    ->label('N° Commande')
+                    ->label('N°')
                     ->searchable()
                     ->sortable(),
 
