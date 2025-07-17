@@ -13,6 +13,9 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\EmailVerificationController;
 
 Route::get('/', HomePage::class)->name('home');
+Route::get('/about', function() {
+    return view('about');
+})->name('about');
 Route::get('/shop', function() {
     return redirect('/shop/men');
 })->name('shop');
