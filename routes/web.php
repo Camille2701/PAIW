@@ -38,6 +38,31 @@ Route::middleware('auth')->group(function () {
         return view('profile.profile', ['user' => Auth::user()]);
     })->name('profile');
 
+    Route::put('/profile', function() {
+        $user = Auth::user();
+        $section = request('section');
+
+        if ($section === 'personal') {
+            $validated = request()->validate([
+                'name' => 'required|string|max:255',
+                'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+                'first_name' => 'nullable|string|max:255',
+                'last_name' => 'nullable|string|max:255',
+            ]);
+        } elseif ($section === 'address') {
+            $validated = request()->validate([
+                'street' => 'nullable|string|max:255',
+                'postal_code' => 'nullable|string|max:10',
+                'department' => 'nullable|string|max:255',
+                'country' => 'nullable|string|max:255',
+            ]);
+        }
+
+        $user->update($validated);
+
+        return redirect()->route('profile')->with('success', 'Profil mis à jour avec succès !');
+    })->name('profile.update');
+
     Route::get('/profile/security', function() {
         return view('profile.security', ['user' => Auth::user()]);
     })->name('profile.security');
