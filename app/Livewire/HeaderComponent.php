@@ -9,6 +9,7 @@ class HeaderComponent extends Component
 {
     public $search = '';
     public $showSearchModal = false;
+    public $showUserMenu = false;
 
     public function searchAction()
     {
@@ -55,6 +56,16 @@ class HeaderComponent extends Component
     {
         $this->showSearchModal = false;
         $this->search = '';
+    }
+
+    public function toggleUserMenu()
+    {
+        $this->showUserMenu = !$this->showUserMenu;
+    }
+
+    public function closeUserMenu()
+    {
+        $this->showUserMenu = false;
     }
 
     public function render()

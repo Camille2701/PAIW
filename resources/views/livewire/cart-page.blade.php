@@ -109,9 +109,39 @@
 
                                     <!-- Code de coupon -->
                                     <div class="mb-6">
-                                        <input type="text"
-                                               placeholder="Entrez le code de coupon ici"
-                                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                        <h3 class="text-sm font-medium text-gray-900 mb-3">Code de réduction</h3>
+                                        @if(!$coupon_applied)
+                                            <div class="flex space-x-2">
+                                                <input type="text"
+                                                       wire:model="coupon_code"
+                                                       placeholder="Entrez votre code"
+                                                       class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
+                                                <button wire:click="applyCoupon"
+                                                        type="button"
+                                                        class="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors text-sm font-medium cursor-pointer">
+                                                    Appliquer
+                                                </button>
+                                            </div>
+                                            @if($coupon_message)
+                                                <p class="text-sm mt-2 {{ $coupon_applied ? 'text-green-600' : 'text-red-600' }}">{{ $coupon_message }}</p>
+                                            @endif
+                                        @else
+                                            <div class="bg-green-50 border border-green-200 rounded-lg p-3">
+                                                <div class="flex items-center justify-between">
+                                                    <div class="flex items-center">
+                                                        <svg class="w-4 h-4 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                                        </svg>
+                                                        <span class="text-sm font-medium text-green-800">Coupon {{ strtoupper($coupon_code) }} appliqué</span>
+                                                    </div>
+                                                    <button wire:click="removeCoupon"
+                                                            type="button"
+                                                            class="text-green-600 hover:text-green-800 text-sm underline cursor-pointer">
+                                                        Retirer
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        @endif
                                     </div>
 
                                     <!-- Totaux -->
@@ -120,6 +150,12 @@
                                             <span class="text-gray-600">Sous-total</span>
                                             <span class="font-medium">{{ number_format($totalPrice, 2) }}€</span>
                                         </div>
+                                        @if($coupon_applied && $this->getDiscountAmount() > 0)
+                                        <div class="flex justify-between">
+                                            <span class="text-gray-600">Réduction ({{ ($coupon_discount * 100) }}%)</span>
+                                            <span class="font-medium text-green-600">-{{ number_format($this->getDiscountAmount(), 2) }}€</span>
+                                        </div>
+                                        @endif
                                         <div class="flex justify-between">
                                             <span class="text-gray-600">Livraison</span>
                                             <span class="text-gray-500">Calculé à l'étape suivante</span>
@@ -127,7 +163,14 @@
                                         <div class="border-t border-gray-200 pt-3">
                                             <div class="flex justify-between">
                                                 <span class="text-lg font-semibold text-gray-900">Total</span>
-                                                <span class="text-lg font-semibold text-gray-900">{{ number_format($totalPrice, 2) }}€</span>
+                                                @if($coupon_applied && $this->getDiscountAmount() > 0)
+                                                    <div class="text-right">
+                                                        <span class="text-sm text-gray-500 line-through">{{ number_format($totalPrice, 2) }}€</span>
+                                                        <span class="text-lg font-semibold text-gray-900 block">{{ number_format($this->getFinalTotal(), 2) }}€</span>
+                                                    </div>
+                                                @else
+                                                    <span class="text-lg font-semibold text-gray-900">{{ number_format($totalPrice, 2) }}€</span>
+                                                @endif
                                             </div>
                                         </div>
                                     </div>

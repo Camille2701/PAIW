@@ -1,13 +1,16 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Auth;
 use App\Livewire\HomePage;
 use App\Livewire\ShopPage;
 use App\Livewire\ProductPage;
 use App\Livewire\CartPage;
 use App\Livewire\CheckoutPage;
 use App\Livewire\OrderConfirmation;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SecurityController;
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\EmailVerificationController;
 
 Route::get('/', HomePage::class)->name('home');
 Route::get('/shop', function() {
@@ -32,7 +35,21 @@ Route::get('/checkout', CheckoutPage::class)->name('checkout');
 // Route pour la confirmation de commande
 Route::get('/order/confirmation/{orderId}', OrderConfirmation::class)->name('order.confirmation');
 
-// Route pour le profil utilisateur (temporaire)
-Route::get('/profile', function() {
-    return view('profile', ['user' => Auth::user()]);
-})->middleware('auth')->name('profile');
+// Routes pour le profil utilisateur
+Route::middleware('auth')->group(function () {
+    // Routes pour le profil
+    Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
+    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+
+    // Routes pour la sécurité
+    Route::get('/profile/security', [SecurityController::class, 'show'])->name('profile.security');
+    Route::put('/profile/security', [SecurityController::class, 'updatePassword'])->name('profile.security.update');
+
+    // Routes pour les commandes
+    Route::get('/profile/orders', [OrderController::class, 'index'])->name('profile.orders');
+
+    // Route pour la vérification d'email
+    Route::post('/email/verification-notification', [EmailVerificationController::class, 'send'])
+         ->middleware('throttle:6,1')
+         ->name('verification.send');
+});

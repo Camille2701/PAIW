@@ -104,9 +104,13 @@
 
                     <div>
                         <label for="country" class="block text-sm font-medium text-gray-700">Pays</label>
-                        <input id="country" name="country" type="text" autocomplete="country" required
-                               class="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                               placeholder="France" value="{{ old('country') }}">
+                        <select id="country" name="country" autocomplete="country" required
+                                class="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                            <option value="">Sélectionner une option</option>
+                            <option value="France" {{ old('country') === 'France' ? 'selected' : '' }}>France</option>
+                            <option value="Suisse" {{ old('country') === 'Suisse' ? 'selected' : '' }}>Suisse</option>
+                            <option value="Belgique" {{ old('country') === 'Belgique' ? 'selected' : '' }}>Belgique</option>
+                        </select>
                         @error('country')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
