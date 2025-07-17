@@ -6,6 +6,7 @@ use App\Livewire\HomePage;
 use App\Livewire\ShopPage;
 use App\Livewire\ProductPage;
 use App\Livewire\CartPage;
+use App\Livewire\CheckoutPage;
 
 Route::get('/', HomePage::class)->name('home');
 Route::get('/shop', function() {
@@ -23,6 +24,9 @@ Route::get('/cart', CartPage::class)->name('cart.index');
 Route::get('/panier', function() {
     return redirect('/cart');
 })->name('panier');
+
+// Route pour le checkout
+Route::get('/checkout', CheckoutPage::class)->name('checkout');
 
 // Route pour le profil utilisateur (temporaire)
 Route::get('/profile', function() {

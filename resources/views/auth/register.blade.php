@@ -5,7 +5,9 @@
     <div class="max-w-md w-full space-y-8">
         <div>
             <div class="mx-auto h-12 w-auto flex justify-center">
-                <h1 class="text-3xl font-bold text-gray-900">PAIW</h1>
+                <a href="{{ route('home') }}" class="text-3xl font-bold text-gray-900 hover:text-indigo-600 transition-colors">
+                    PAIW
+                </a>
             </div>
             <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
                 Créer un compte
@@ -65,6 +67,16 @@
                            class="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                            placeholder="Adresse" value="{{ old('street') }}">
                     @error('street')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div>
+                    <label for="city" class="block text-sm font-medium text-gray-700">Ville</label>
+                    <input id="city" name="city" type="text" autocomplete="address-level2" required
+                           class="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                           placeholder="Ville" value="{{ old('city') }}">
+                    @error('city')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
@@ -131,6 +143,11 @@
                     Déjà un compte ?
                     <a href="{{ route('login') }}" class="font-medium text-indigo-600 hover:text-indigo-500">
                         Se connecter
+                    </a>
+                </p>
+                <p class="mt-2 text-sm text-gray-600">
+                    <a href="{{ route('home') }}" class="font-medium text-gray-500 hover:text-gray-700">
+                        ← Retour à l'accueil
                     </a>
                 </p>
             </div>

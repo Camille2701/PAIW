@@ -16,7 +16,7 @@ class HomePageSettings extends Model implements HasMedia
     // Pas de timestamps car on utilise un seul enregistrement statique
     public $timestamps = false;
 
-    protected $fillable = [];
+    protected $fillable = ['id'];
 
     public static function instance()
     {

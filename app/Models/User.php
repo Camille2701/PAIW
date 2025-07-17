@@ -32,6 +32,7 @@ class User extends Authenticatable implements HasMedia
         'first_name',
         'last_name',
         'street',
+        'city',
         'postal_code',
         'department',
         'country',

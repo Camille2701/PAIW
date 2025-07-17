@@ -28,6 +28,16 @@ class ProductTypeSeeder extends Seeder
             ['name' => 'Pull', 'gender' => 'women'],
             ['name' => 'Cardigan', 'gender' => 'women'],
             ['name' => 'Veste', 'gender' => 'women'],
+
+            // Vêtements unisexes
+            ['name' => 'Hoodie', 'gender' => 'unisex'],
+            ['name' => 'Sweat-shirt', 'gender' => 'unisex'],
+            ['name' => 'T-shirt oversize', 'gender' => 'unisex'],
+            ['name' => 'Jogger', 'gender' => 'unisex'],
+            ['name' => 'Short', 'gender' => 'unisex'],
+            ['name' => 'Casquette', 'gender' => 'unisex'],
+            ['name' => 'Bonnet', 'gender' => 'unisex'],
+            ['name' => 'Chaussettes', 'gender' => 'unisex'],
         ]);
     }
 }

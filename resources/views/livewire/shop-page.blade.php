@@ -158,7 +158,14 @@
                                     <a href="/shop/{{ $gender }}/{{ $product->slug }}" style="text-decoration: none; color: inherit;">
                                         <div style="display: flex; justify-content: space-between; align-items: flex-start;">
                                             <div style="flex: 1;">
-                                                <h3 style="font-size: 0.875rem; font-weight: 500; color: #111827; margin-bottom: 0.25rem;">{{ $product->name }}</h3>
+                                                <h3 style="font-size: 0.875rem; font-weight: 500; color: #111827; margin-bottom: 0.25rem;">
+                                                    {{ $product->name }}
+                                                    @if($product->productType->gender === 'unisex')
+                                                        <span style="font-size: 0.75rem; color: #059669; background-color: #d1fae5; padding: 0.125rem 0.25rem; border-radius: 0.25rem; margin-left: 0.25rem;">
+                                                            Unisexe
+                                                        </span>
+                                                    @endif
+                                                </h3>
                                                 <p style="font-size: 0.875rem; color: #111827; font-weight: 500;">{{ number_format($product->price, 2) }}€</p>
                                             </div>
                                             <span style="font-size: 0.75rem; color: #6b7280; background-color: #f3f4f6; padding: 0.25rem 0.5rem; border-radius: 0.25rem; margin-left: 0.5rem;">

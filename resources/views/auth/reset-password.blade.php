@@ -5,7 +5,7 @@
     <div class="max-w-md w-full space-y-8">
         <div>
             <div class="mx-auto h-12 w-auto flex justify-center">
-                <h1 class="text-3xl font-bold text-gray-900">PAIW</h1>
+                <a href="{{ url('/') }}" class="text-3xl font-bold text-gray-900 hover:text-indigo-600 transition-colors">PAIW</a>
             </div>
             <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
                 Réinitialiser le mot de passe
@@ -48,6 +48,12 @@
                         class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                     Réinitialiser le mot de passe
                 </button>
+            </div>
+
+            <div class="text-center mt-4">
+                <a href="{{ url('/') }}" class="text-sm text-gray-500 hover:text-indigo-600 transition-colors">
+                    ← Retour à l'accueil
+                </a>
             </div>
         </form>
     </div>

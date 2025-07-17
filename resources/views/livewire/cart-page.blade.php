@@ -133,9 +133,10 @@
                                     </div>
 
                                     <!-- Bouton de commande -->
-                                    <button class="w-full bg-black text-white py-3 px-4 rounded-md hover:bg-gray-800 transition duration-200 font-medium">
+                                    <a href="{{ route('checkout') }}"
+                                       class="block w-full bg-black text-white py-3 px-4 rounded-md hover:bg-gray-800 transition duration-200 font-medium text-center">
                                         Passer à l'achat
-                                    </button>
+                                    </a>
                                 </div>
                             </div>
                         </div>

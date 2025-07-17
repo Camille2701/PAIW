@@ -5,4 +5,5 @@ return [
     'women' => 'Femmes',
     'male' => 'Homme',
     'female' => 'Femme',
+    'unisex' => 'Unisexe',
 ];
