@@ -15,6 +15,7 @@ return new class extends Migration {
             $table->string('name'); // ex: t-shirt, sweat, pantalon
             $table->enum('gender', ['men', 'women', 'unisex'])->default('unisex');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\ColorResource\Pages;
 use App\Filament\Resources\ColorResource\RelationManagers;
+use App\Filament\Traits\HasSoftDeleteToggle;
 use App\Models\Color;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -19,6 +20,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ColorResource extends Resource
 {
+    use HasSoftDeleteToggle;
     protected static ?string $model = Color::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-swatch';
@@ -30,6 +32,8 @@ class ColorResource extends Resource
     protected static ?string $modelLabel = 'Couleur';
 
     protected static ?string $pluralModelLabel = 'Couleurs';
+
+    // Retire la méthode getEloquentQuery car elle est maintenant dans le trait
 
     public static function form(Form $form): Form
     {
@@ -89,16 +93,20 @@ class ColorResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                static::getTrashedToggleFilter(),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
+                Tables\Actions\ForceDeleteAction::make(),
+                Tables\Actions\RestoreAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\ForceDeleteBulkAction::make(),
+                    Tables\Actions\RestoreBulkAction::make(),
                 ]),
             ])
             ->defaultSort('name');

@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\ProductResource\Pages;
 use App\Filament\Resources\ProductResource\RelationManagers;
+use App\Filament\Traits\HasSoftDeleteToggle;
 use App\Models\Product;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -15,6 +16,7 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\ImageEntry;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Group;
@@ -24,6 +26,7 @@ use Illuminate\Support\Facades\Log;
 
 class ProductResource extends Resource
 {
+    use HasSoftDeleteToggle;
     protected static ?string $model = Product::class;    protected static ?string $navigationIcon = 'heroicon-o-shopping-bag';
 
     protected static ?string $navigationGroup = 'Catalogue';
@@ -31,6 +34,14 @@ class ProductResource extends Resource
     protected static ?string $modelLabel = 'Produit';
 
     protected static ?string $pluralModelLabel = 'Produits';
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->withoutGlobalScopes([
+                SoftDeletingScope::class,
+            ]);
+    }
 
     public static function form(Form $form): Form
     {
@@ -194,15 +205,21 @@ class ProductResource extends Resource
                 Tables\Filters\Filter::make('has_variants')
                     ->label('Avec variantes')
                     ->query(fn (Builder $query): Builder => $query->has('variants')),
+
+                static::getTrashedToggleFilter(),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
+                Tables\Actions\ForceDeleteAction::make(),
+                Tables\Actions\RestoreAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\ForceDeleteBulkAction::make(),
+                    Tables\Actions\RestoreBulkAction::make(),
                 ]),
             ])
             ->defaultSort('created_at', 'desc');

@@ -35,6 +35,7 @@ return new class extends Migration {
             $table->string('coupon_code')->nullable();
 
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
