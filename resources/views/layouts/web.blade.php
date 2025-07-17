@@ -21,7 +21,7 @@
 </head>
 <body class="font-sans antialiased">
     <!-- Header -->
-    <livewire:components.header />
+    <livewire:header-component />
 
     <!-- Page Content -->
     <main>
