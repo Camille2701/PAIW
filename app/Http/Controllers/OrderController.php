@@ -22,4 +22,22 @@ class OrderController extends Controller
             'orders' => $orders
         ]);
     }
+
+    public function cancel(Order $order)
+    {
+        // Vérifier que l'utilisateur peut annuler cette commande
+        if ($order->user_id !== Auth::id()) {
+            abort(403, 'Vous n\'êtes pas autorisé à annuler cette commande.');
+        }
+
+        if (!$order->canBeCancelled()) {
+            return back()->with('error', 'Cette commande ne peut plus être annulée.');
+        }
+
+        if ($order->cancel()) {
+            return back()->with('success', 'Commande annulée avec succès. Le stock a été remis à jour et vous recevrez un email de confirmation.');
+        }
+
+        return back()->with('error', 'Erreur lors de l\'annulation de la commande.');
+    }
 }
