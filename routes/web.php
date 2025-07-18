@@ -50,6 +50,7 @@ Route::middleware('auth')->group(function () {
 
     // Routes pour les commandes
     Route::get('/profile/orders', [OrderController::class, 'index'])->name('profile.orders');
+    Route::post('/orders/{order}/cancel', [OrderController::class, 'cancel'])->name('orders.cancel');
 
     // Route pour la vérification d'email
     Route::post('/email/verification-notification', [EmailVerificationController::class, 'send'])
