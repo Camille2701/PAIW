@@ -86,7 +86,19 @@
             <h3>📦 Détails de la commande</h3>
             <p><strong>Numéro de commande :</strong> #{{ $order->id }}</p>
             <p><strong>Date de commande :</strong> {{ $order->created_at->format('d/m/Y à H:i') }}</p>
-            <p><strong>Nouveau statut :</strong> {{ ucfirst($newStatus) }}</p>
+            <p><strong>Nouveau statut :</strong>
+                @php
+                    $statusTranslations = [
+                        'pending' => 'En attente',
+                        'paid' => 'Payée',
+                        'processing' => 'En préparation',
+                        'shipped' => 'Expédiée',
+                        'delivered' => 'Livrée',
+                        'cancelled' => 'Annulée'
+                    ];
+                @endphp
+                {{ $statusTranslations[$newStatus] ?? ucfirst($newStatus) }}
+            </p>
         </div>
 
         @if($order->status == 'shipped')
