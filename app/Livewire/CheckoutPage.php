@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Services\CartService;
 use App\Notifications\OrderConfirmation;
+use App\Support\GuestUser;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Livewire\Component;
@@ -263,14 +264,9 @@ class CheckoutPage extends Component
                         // Utilisateur connecté
                         Auth::user()->notify(new OrderConfirmation($order));
                     } else {
-                        // Utilisateur non connecté - créer un objet temporaire avec l'email
-                        $guestUser = (object) [
-                            'email' => $this->email,
-                            'first_name' => $this->first_name,
-                            'last_name' => $this->last_name
-                        ];
-
-                        \Illuminate\Support\Facades\Notification::send($guestUser, new OrderConfirmation($order));
+                        // Utilisateur non connecté - utiliser notre classe GuestUser
+                        $guestUser = new GuestUser($this->email, $this->first_name, $this->last_name);
+                        $guestUser->notify(new OrderConfirmation($order));
                     }
 
                     Log::info('📧 Email de confirmation envoyé avec succès');
