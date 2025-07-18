@@ -37,6 +37,12 @@
             </div>
         @endif
 
+        @if (session('error'))
+            <div class="mb-6 bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg">
+                {{ session('error') }}
+            </div>
+        @endif
+
         <!-- Contenu principal -->
         <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
             <!-- Colonne gauche - Statistiques -->
@@ -123,7 +129,7 @@
 
                     <div class="p-6">
                         @forelse($orders as $order)
-                            <div class="order-item border border-gray-200 rounded-lg p-6 mb-4 hover:shadow-md transition-shadow cursor-pointer"
+                            <div class="order-item border border-gray-200 rounded-lg p-6 mb-4 hover:shadow-md transition-shadow"
                                  data-status="{{ $order->status }}"
                                  onclick="toggleOrderDetails({{ $order->id }})">
                                 <!-- En-tête de commande -->
@@ -215,7 +221,7 @@
                                         </div>
                                     @endif
                                     <div class="flex-1 text-right">
-                                        <button class="text-purple-600 hover:text-purple-800 text-sm font-medium">
+                                        <button onclick="event.stopPropagation(); toggleOrderDetails({{ $order->id }})" class="text-purple-600 hover:text-purple-800 text-sm font-medium cursor-pointer">
                                             Voir les détails →
                                         </button>
                                     </div>
@@ -302,6 +308,50 @@
                                             </div>
                                         </div>
                                     </div>
+
+                                    <!-- Bouton d'annulation pour les commandes payées -->
+                                    @if($order->status === 'paid')
+                                        <div class="mt-4 pt-4 border-t border-gray-200">
+                                            <div class="flex justify-end">
+                                                <button onclick="event.stopPropagation(); showCancelConfirmation({{ $order->id }})"
+                                                        class="inline-flex items-center px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg transition-colors duration-200 cursor-pointer">
+                                                    <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                                    </svg>
+                                                    Annuler la commande
+                                                </button>
+                                            </div>
+
+                                            <!-- Confirmation d'annulation (cachée par défaut) -->
+                                            <div id="cancel-confirmation-{{ $order->id }}" class="cancel-confirmation hidden mt-4 p-4 bg-red-50 border border-red-200 rounded-lg" onclick="event.stopPropagation()">
+                                                <div class="flex">
+                                                    <div class="flex-shrink-0">
+                                                        <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                                                            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                                                        </svg>
+                                                    </div>
+                                                    <div class="ml-3 flex-1">
+                                                        <h3 class="text-sm font-medium text-red-800">
+                                                            Confirmer l'annulation
+                                                        </h3>
+                                                        <div class="mt-2 text-sm text-red-700">
+                                                            <p>Êtes-vous certain de vouloir annuler cette commande ? Cette action est irréversible et le stock sera automatiquement restauré.</p>
+                                                        </div>
+                                                        <div class="mt-4 flex space-x-3">
+                                                            <button onclick="event.stopPropagation(); confirmCancelOrder({{ $order->id }})"
+                                                                    class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 text-sm font-medium rounded-md transition-colors duration-200 cursor-pointer">
+                                                                Oui, annuler la commande
+                                                            </button>
+                                                            <button onclick="event.stopPropagation(); hideCancelConfirmation({{ $order->id }})"
+                                                                    class="bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 px-4 py-2 text-sm font-medium rounded-md transition-colors duration-200 cursor-pointer">
+                                                                Garder la commande
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endif
                                 </div>
                             </div>
                         @empty
@@ -371,6 +421,63 @@ function toggleOrderDetails(orderId) {
     } else {
         detailsElement.classList.add('hidden');
     }
+}
+
+// Fonction pour afficher la confirmation d'annulation
+function showCancelConfirmation(orderId) {
+    // Masquer toutes les autres confirmations
+    document.querySelectorAll('.cancel-confirmation').forEach(function(confirmation) {
+        confirmation.classList.add('hidden');
+    });
+
+    // Afficher la confirmation pour cette commande
+    const confirmationElement = document.getElementById('cancel-confirmation-' + orderId);
+    confirmationElement.classList.remove('hidden');
+
+    // Animation d'apparition
+    confirmationElement.style.opacity = '0';
+    confirmationElement.style.transform = 'translateY(-10px)';
+    setTimeout(function() {
+        confirmationElement.style.opacity = '1';
+        confirmationElement.style.transform = 'translateY(0)';
+        confirmationElement.style.transition = 'opacity 0.3s ease-in-out, transform 0.3s ease-in-out';
+    }, 10);
+}
+
+// Fonction pour masquer la confirmation d'annulation
+function hideCancelConfirmation(orderId) {
+    const confirmationElement = document.getElementById('cancel-confirmation-' + orderId);
+    confirmationElement.style.opacity = '0';
+    confirmationElement.style.transform = 'translateY(-10px)';
+    setTimeout(function() {
+        confirmationElement.classList.add('hidden');
+    }, 300);
+}
+
+// Fonction pour confirmer l'annulation d'une commande
+function confirmCancelOrder(orderId) {
+    // Créer un formulaire pour la soumission POST
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '/orders/' + orderId + '/cancel';
+
+    // Ajouter le token CSRF
+    const csrfToken = document.createElement('input');
+    csrfToken.type = 'hidden';
+    csrfToken.name = '_token';
+    csrfToken.value = '{{ csrf_token() }}';
+    form.appendChild(csrfToken);
+
+    // Ajouter la méthode PATCH
+    const methodField = document.createElement('input');
+    methodField.type = 'hidden';
+    methodField.name = '_method';
+    methodField.value = 'PATCH';
+    form.appendChild(methodField);
+
+    // Ajouter le formulaire au body et le soumettre
+    document.body.appendChild(form);
+    form.submit();
 }
 </script>
 

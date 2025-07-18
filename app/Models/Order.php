@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Log;
 
 class Order extends Model
 {
@@ -49,6 +50,20 @@ class Order extends Model
                 $oldStatus = $order->getOriginal('status');
                 $newStatus = $order->status;
 
+                // Gestion du stock si annulation
+                if ($newStatus === 'cancelled' && $oldStatus !== 'cancelled') {
+                    // Remettre le stock en cas d'annulation
+                    foreach ($order->orderItems as $orderItem) {
+                        if ($orderItem->productVariant) {
+                            $productVariant = $orderItem->productVariant;
+                            $productVariant->stock += $orderItem->quantity;
+                            $productVariant->save();
+
+                            Log::info("📈 Stock restauré - Variant #{$productVariant->id}: +{$orderItem->quantity} = {$productVariant->stock}");
+                        }
+                    }
+                }
+
                 // Envoyer la notification seulement pour certains statuts
                 $notifiableStatuses = ['shipped', 'delivered', 'cancelled'];
 
@@ -84,5 +99,26 @@ class Order extends Model
         return $this->orderItems->sum(function ($item) {
             return $item->quantity * $item->unit_price;
         });
+    }
+
+    /**
+     * Annuler la commande (uniquement si le statut est 'paid')
+     */
+    public function cancel()
+    {
+        if ($this->status === 'paid') {
+            $this->status = 'cancelled';
+            $this->save();
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Vérifier si la commande peut être annulée
+     */
+    public function canBeCancelled()
+    {
+        return $this->status === 'paid';
     }
 }
