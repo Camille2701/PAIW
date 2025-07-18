@@ -468,13 +468,6 @@ function confirmCancelOrder(orderId) {
     csrfToken.value = '{{ csrf_token() }}';
     form.appendChild(csrfToken);
 
-    // Ajouter la méthode PATCH
-    const methodField = document.createElement('input');
-    methodField.type = 'hidden';
-    methodField.name = '_method';
-    methodField.value = 'PATCH';
-    form.appendChild(methodField);
-
     // Ajouter le formulaire au body et le soumettre
     document.body.appendChild(form);
     form.submit();
