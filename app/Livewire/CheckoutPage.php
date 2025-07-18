@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Services\CartService;
+use App\Notifications\OrderConfirmation;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Livewire\Component;
@@ -254,6 +255,30 @@ class CheckoutPage extends Component
             $order = $this->createOrder();
 
             if ($order) {
+                Log::info('✅ Commande créée avec succès, ID: ' . $order->id);
+
+                // Envoyer l'email de confirmation avec facture PDF
+                try {
+                    if (Auth::check()) {
+                        // Utilisateur connecté
+                        Auth::user()->notify(new OrderConfirmation($order));
+                    } else {
+                        // Utilisateur non connecté - créer un objet temporaire avec l'email
+                        $guestUser = (object) [
+                            'email' => $this->email,
+                            'first_name' => $this->first_name,
+                            'last_name' => $this->last_name
+                        ];
+
+                        \Illuminate\Support\Facades\Notification::send($guestUser, new OrderConfirmation($order));
+                    }
+
+                    Log::info('📧 Email de confirmation envoyé avec succès');
+                } catch (\Exception $e) {
+                    Log::error('❌ Erreur envoi email: ' . $e->getMessage());
+                    // Ne pas bloquer le processus si l'email échoue
+                }
+
                 // Vider le panier APRÈS la création réussie de la commande
                 $this->cartService->clearCart();
 
