@@ -413,7 +413,7 @@ class OrderResource extends Resource
                     ])
                     ->collapsible(),
 
-                Section::make('�💰 Résumé financier')
+                Section::make('💰 Résumé financier')
                     ->description('Détails des montants')
                     ->schema([
                         TextEntry::make('subtotal')
