@@ -13,6 +13,7 @@ use Filament\Tables\Table;
 use Filament\Infolists\Infolist;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\RepeatableEntry;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
@@ -32,6 +33,7 @@ class OrderResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
+            ->with(['orderItems.productVariant.product', 'orderItems.productVariant.color', 'orderItems.productVariant.size'])
             ->withoutGlobalScopes([
                 SoftDeletingScope::class,
             ]);
@@ -210,7 +212,17 @@ class OrderResource extends Resource
                 Tables\Columns\TextColumn::make('total_quantity')
                     ->label('Articles')
                     ->state(function ($record) {
-                        return $record->orderItems->sum('quantity');
+                        $totalQty = $record->orderItems->sum('quantity');
+                        $uniqueProducts = $record->orderItems->count();
+                        return $totalQty . ' pcs (' . $uniqueProducts . ' produit' . ($uniqueProducts > 1 ? 's' : '') . ')';
+                    })
+                    ->tooltip(function ($record) {
+                        return $record->orderItems->map(function ($item) {
+                            $product = $item->productVariant->product->name ?? 'Produit supprimé';
+                            $color = $item->productVariant->color->name ?? 'N/A';
+                            $size = $item->productVariant->size->name ?? 'N/A';
+                            return "• {$product} ({$color}, {$size}) x{$item->quantity}";
+                        })->implode("\n");
                     })
                     ->sortable(),
 
@@ -357,6 +369,48 @@ class OrderResource extends Resource
                             }),
                     ])
                     ->columns(2)
+                    ->collapsible(),
+
+                Section::make('🛍️ Articles commandés')
+                    ->description('Détail de tous les articles de cette commande')
+                    ->schema([
+                        RepeatableEntry::make('orderItems')
+                            ->label('')
+                            ->schema([
+                                TextEntry::make('productVariant.product.name')
+                                    ->label('Produit')
+                                    ->weight('bold')
+                                    ->color('primary'),
+
+                                TextEntry::make('productVariant.color.name')
+                                    ->label('Couleur')
+                                    ->badge()
+                                    ->color('info'),
+
+                                TextEntry::make('productVariant.size.name')
+                                    ->label('Taille')
+                                    ->badge()
+                                    ->color('warning'),
+
+                                TextEntry::make('quantity')
+                                    ->label('Quantité')
+                                    ->badge()
+                                    ->color('success')
+                                    ->suffix(' pcs'),
+
+                                TextEntry::make('unit_price')
+                                    ->label('Prix unitaire')
+                                    ->money('EUR'),
+
+                                TextEntry::make('total_price')
+                                    ->label('Total')
+                                    ->money('EUR')
+                                    ->weight('bold')
+                                    ->color('primary'),
+                            ])
+                            ->columns(6)
+                            ->contained(false)
+                    ])
                     ->collapsible(),
 
                 Section::make('💰 Résumé financier')

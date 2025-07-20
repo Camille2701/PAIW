@@ -11,23 +11,22 @@
 
         <!-- Navigation des sections -->
         <div class="mb-8">
-            <nav class="flex space-x-8 border-b border-gray-200" aria-label="Tabs">
-                <a href="/profile"
-                   class="border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 py-2 px-1 font-medium text-sm flex items-center space-x-2">
-                    <span>👤</span>
-                    <span>Profil</span>
-                </a>
-                <a href="/profile/security"
-                   class="border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 py-2 px-1 font-medium text-sm flex items-center space-x-2">
-                    <span>🔒</span>
-                    <span>Sécurité</span>
-                </a>
-                <a href="/profile/orders"
-                   class="border-b-2 border-blue-500 text-blue-600 py-2 px-1 font-medium text-sm flex items-center space-x-2">
-                    <span>📦</span>
-                    <span>Commandes</span>
-                </a>
-            </nav>
+            <div class="bg-white border border-gray-200 shadow-sm">
+                <nav class="flex" aria-label="Tabs">
+                    <a href="/profile"
+                       class="flex-1 border-r border-gray-200 px-6 py-4 text-center text-sm font-medium text-gray-700 hover:text-black hover:bg-gray-50 transition-colors">
+                        Profil
+                    </a>
+                    <a href="/profile/security"
+                       class="flex-1 border-r border-gray-200 px-6 py-4 text-center text-sm font-medium text-gray-700 hover:text-black hover:bg-gray-50 transition-colors">
+                        Sécurité
+                    </a>
+                    <a href="/profile/orders"
+                       class="flex-1 px-6 py-4 text-center text-sm font-medium bg-black text-white">
+                        Commandes
+                    </a>
+                </nav>
+            </div>
         </div>
 
         <!-- Messages -->
@@ -56,44 +55,27 @@
                 @endphp
 
                 <!-- Carte Statistiques des commandes -->
-                <div class="bg-white rounded-xl shadow-lg border border-gray-100 p-6 mb-6">
+                <div class="bg-white border border-gray-200 shadow-sm p-6 mb-6">
                     <div class="flex items-center mb-4">
-                        <div class="w-10 h-10 bg-gradient-to-r from-purple-500 to-indigo-500 rounded-lg flex items-center justify-center">
-                            <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                            </svg>
-                        </div>
-                        <h3 class="text-lg font-bold text-gray-900 ml-3">Résumé</h3>
+                        <h3 class="text-lg font-medium text-black">Résumé</h3>
                     </div>
 
                     <div class="space-y-4">
-                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                            <div class="flex items-center">
-                                <div class="w-2 h-2 bg-blue-400 rounded-full mr-3"></div>
-                                <span class="text-gray-600 font-medium">Total commandes</span>
-                            </div>
-                            <span class="font-semibold text-gray-900">{{ $totalOrders }}</span>
+                        <div class="flex items-center justify-between py-3 border-b border-gray-100">
+                            <span class="text-gray-700 font-medium">Total commandes</span>
+                            <span class="font-semibold text-black">{{ $totalOrders }}</span>
                         </div>
-                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                            <div class="flex items-center">
-                                <div class="w-2 h-2 bg-yellow-400 rounded-full mr-3"></div>
-                                <span class="text-gray-600 font-medium">En cours</span>
-                            </div>
-                            <span class="font-semibold text-gray-900">{{ $pendingOrders }}</span>
+                        <div class="flex items-center justify-between py-3 border-b border-gray-100">
+                            <span class="text-gray-700 font-medium">En cours</span>
+                            <span class="font-semibold text-black">{{ $pendingOrders }}</span>
                         </div>
-                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                            <div class="flex items-center">
-                                <div class="w-2 h-2 bg-green-400 rounded-full mr-3"></div>
-                                <span class="text-gray-600 font-medium">Livrées</span>
-                            </div>
-                            <span class="font-semibold text-gray-900">{{ $deliveredOrders }}</span>
+                        <div class="flex items-center justify-between py-3 border-b border-gray-100">
+                            <span class="text-gray-700 font-medium">Livrées</span>
+                            <span class="font-semibold text-black">{{ $deliveredOrders }}</span>
                         </div>
-                        <div class="flex items-center justify-between p-3 bg-gradient-to-r from-purple-50 to-indigo-50 rounded-lg border border-purple-100">
-                            <div class="flex items-center">
-                                <div class="w-2 h-2 bg-purple-400 rounded-full mr-3"></div>
-                                <span class="text-purple-700 font-medium">Total dépensé</span>
-                            </div>
-                            <span class="font-bold text-purple-900">{{ number_format($totalSpent, 2) }} €</span>
+                        <div class="flex items-center justify-between py-3 bg-gray-50 px-3 -mx-3">
+                            <span class="text-black font-medium">Total dépensé</span>
+                            <span class="font-bold text-black">{{ number_format($totalSpent, 2) }} €</span>
                         </div>
                     </div>
                 </div>
@@ -101,20 +83,13 @@
 
             <!-- Colonne droite - Liste des commandes -->
             <div class="lg:col-span-3">
-                <div class="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
-                    <div class="px-6 py-4 bg-gradient-to-r from-purple-50 to-indigo-50 border-b border-gray-100">
+                <div class="bg-white border border-gray-200 shadow-sm">
+                    <div class="px-6 py-4 border-b border-gray-200">
                         <div class="flex items-center justify-between">
-                            <div class="flex items-center">
-                                <div class="w-8 h-8 bg-gradient-to-r from-purple-500 to-indigo-500 rounded-lg flex items-center justify-center mr-3">
-                                    <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                                    </svg>
-                                </div>
-                                <h3 class="text-lg font-bold text-gray-900">Historique des commandes</h3>
-                            </div>
-                            <!-- Filtres (optionnel pour plus tard) -->
+                            <h3 class="text-lg font-medium text-black">Historique des commandes</h3>
+                            <!-- Filtres -->
                             <div class="flex space-x-2">
-                                <select id="statusFilter" class="text-sm border border-gray-300 rounded-lg px-3 py-1 focus:outline-none focus:ring-2 focus:ring-purple-500">
+                                <select id="statusFilter" class="text-sm border border-gray-300 px-3 py-1 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-black focus:border-black">
                                     <option value="all">Toutes</option>
                                     <option value="pending">En attente</option>
                                     <option value="processing">En cours</option>
@@ -139,30 +114,7 @@
                                         <p class="text-sm text-gray-600">{{ $order->created_at->format('d/m/Y à H:i') }}</p>
                                     </div>
                                     <div class="text-right">
-                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium
-                                            @switch($order->status ?? 'pending')
-                                                @case('pending')
-                                                    bg-yellow-100 text-yellow-800
-                                                    @break
-                                                @case('processing')
-                                                    bg-blue-100 text-blue-800
-                                                    @break
-                                                @case('shipped')
-                                                    bg-purple-100 text-purple-800
-                                                    @break
-                                                @case('delivered')
-                                                    bg-green-100 text-green-800
-                                                    @break
-                                                @case('cancelled')
-                                                    bg-red-100 text-red-800
-                                                    @break
-                                                @case('paid')
-                                                    bg-blue-100 text-blue-800
-                                                    @break
-                                                @default
-                                                    bg-gray-100 text-gray-800
-                                            @endswitch
-                                        ">
+                                        <span class="inline-flex items-center px-3 py-1 border border-gray-300 text-sm font-medium text-gray-700">
                                             @switch($order->status ?? 'pending')
                                                 @case('pending')
                                                     En attente
@@ -186,7 +138,7 @@
                                                     {{ ucfirst($order->status) }}
                                             @endswitch
                                         </span>
-                                        <p class="text-lg font-bold text-gray-900 mt-1">{{ number_format($order->total_price, 2) }}€</p>
+                                        <p class="text-lg font-bold text-black mt-1">{{ number_format($order->total_price, 2) }}€</p>
                                         <p class="text-sm text-gray-500 mt-1">{{ $order->orderItems->count() }} article(s)</p>
                                     </div>
                                 </div>
@@ -221,7 +173,7 @@
                                         </div>
                                     @endif
                                     <div class="flex-1 text-right">
-                                        <button onclick="event.stopPropagation(); toggleOrderDetails({{ $order->id }})" class="text-purple-600 hover:text-purple-800 text-sm font-medium cursor-pointer">
+                                        <button onclick="event.stopPropagation(); toggleOrderDetails({{ $order->id }})" class="text-black hover:text-gray-700 text-sm font-medium cursor-pointer border-b border-black hover:border-gray-700 transition-colors">
                                             Voir les détails →
                                         </button>
                                     </div>
@@ -314,7 +266,7 @@
                                         <div class="mt-4 pt-4 border-t border-gray-200">
                                             <div class="flex justify-end">
                                                 <button onclick="event.stopPropagation(); showCancelConfirmation({{ $order->id }})"
-                                                        class="inline-flex items-center px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg transition-colors duration-200 cursor-pointer">
+                                                        class="inline-flex items-center px-4 py-2 bg-black text-white text-sm font-medium hover:bg-gray-800 transition-colors duration-200 cursor-pointer">
                                                     <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                                                     </svg>
@@ -339,11 +291,11 @@
                                                         </div>
                                                         <div class="mt-4 flex space-x-3">
                                                             <button onclick="event.stopPropagation(); confirmCancelOrder({{ $order->id }})"
-                                                                    class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 text-sm font-medium rounded-md transition-colors duration-200 cursor-pointer">
+                                                                    class="bg-black hover:bg-gray-800 text-white px-4 py-2 text-sm font-medium transition-colors duration-200 cursor-pointer">
                                                                 Oui, annuler la commande
                                                             </button>
                                                             <button onclick="event.stopPropagation(); hideCancelConfirmation({{ $order->id }})"
-                                                                    class="bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 px-4 py-2 text-sm font-medium rounded-md transition-colors duration-200 cursor-pointer">
+                                                                    class="bg-white hover:bg-gray-50 text-black border border-gray-300 px-4 py-2 text-sm font-medium transition-colors duration-200 cursor-pointer">
                                                                 Garder la commande
                                                             </button>
                                                         </div>
@@ -364,7 +316,7 @@
                                 <h3 class="text-lg font-medium text-gray-900 mb-2">Aucune commande pour le moment</h3>
                                 <p class="text-gray-600 mb-4">Vous n'avez pas encore passé de commande. Découvrez notre collection et trouvez vos articles préférés !</p>
                                 <a href="{{ route('shop') }}"
-                                   class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-medium rounded-lg hover:from-purple-700 hover:to-indigo-700 transition-colors duration-200">
+                                   class="inline-flex items-center px-6 py-3 bg-white border-2 border-black text-black font-medium hover:bg-black hover:text-white transition-colors duration-200">
                                     <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                                     </svg>
